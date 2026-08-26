@@ -483,8 +483,11 @@ const LOCALSTORAGE_OK = (function(){
 })();
 const STORAGE_OK = FIREBASE_OK || LOCALSTORAGE_OK;
 function bannerHtml(){
+  if(lastStorageError){
+    return `<div class="sync-warning">⚠️ Can't reach the Firebase database: ${lastStorageError.replace(/</g,'&lt;')} — this usually means your Realtime Database security rules don't allow read/write. Set rules to <code>{"rules": {".read": true, ".write": true}}</code> in the Firebase console (Realtime Database → Rules).</div>`;
+  }
   if(FIREBASE_OK) return '';
-  return `<div class="sync-warning">⚠️ No Firebase database configured, so this only syncs between tabs on this same device — the host and contestants won't see the same game from separate devices. Open this file's README.md for a 5-minute Firebase setup, then paste your databaseURL into FIREBASE_CONFIG near the top of the script.</div>`;
+  return `<div class="sync-warning">⚠️ No Firebase database configured, so this only syncs between tabs on this same device — the host and contestants won't see the same game from separate devices. Paste your databaseURL into FIREBASE_CONFIG near the top of the script.</div>`;
 }
 
 /* ============================= AUDIO (fully synthesized, no files needed) ============================= */
@@ -594,6 +597,13 @@ const memoryStore = {};
 function firebaseUrl(){
   return FIREBASE_CONFIG.databaseURL.replace(/\/$/,'') + '/' + STATE_KEY.replace(/:/g,'_') + '.json';
 }
+function firebaseReadUrl(){
+  // Cache-bust: some mobile browsers (notably iOS Safari) silently reuse a
+  // cached response for repeated GETs to the same URL, which makes polling
+  // look "stuck" — the contestant never sees the host's updates. Appending
+  // a changing query param plus cache:'no-store' forces a fresh network hit.
+  return firebaseUrl() + '?_=' + Date.now();
+}
 
 function normalizeState(s){
   if(!s) return defaultState();
@@ -604,11 +614,20 @@ function normalizeState(s){
   return s;
 }
 
+let lastStorageError = null;
+
 async function loadState(){
   try{
     if(FIREBASE_OK){
-      const res = await fetch(firebaseUrl());
-      if(!res.ok) return defaultState();
+      const res = await fetch(firebaseReadUrl(), { cache: 'no-store' });
+      if(!res.ok){
+        let detail = '';
+        try{ detail = await res.text(); }catch(e){}
+        lastStorageError = `Firebase read failed (${res.status} ${res.statusText}). ${detail}`;
+        console.error(lastStorageError);
+        return defaultState();
+      }
+      lastStorageError = null;
       const data = await res.json();
       return normalizeState(data);
     } else if(LOCALSTORAGE_OK){
@@ -620,6 +639,8 @@ async function loadState(){
       return normalizeState(JSON.parse(memoryStore[STATE_KEY]));
     }
   }catch(e){
+    lastStorageError = `Network/parse error reading state: ${e.message}`;
+    console.error(lastStorageError);
     return defaultState();
   }
 }
@@ -627,18 +648,29 @@ async function saveState(state){
   state.updatedAt = Date.now();
   try{
     if(FIREBASE_OK){
-      await fetch(firebaseUrl(), {
+      const res = await fetch(firebaseUrl(), {
         method: 'PUT',
         headers: {'Content-Type':'application/json'},
+        cache: 'no-store',
         body: JSON.stringify(state)
       });
+      if(!res.ok){
+        let detail = '';
+        try{ detail = await res.text(); }catch(e){}
+        lastStorageError = `Firebase write failed (${res.status} ${res.statusText}). ${detail}`;
+        console.error(lastStorageError);
+        return { ...state, __saveFailed: true };
+      }
+      lastStorageError = null;
     } else if(LOCALSTORAGE_OK){
       localStorage.setItem(STATE_KEY, JSON.stringify(state));
     } else {
       memoryStore[STATE_KEY] = JSON.stringify(state);
     }
   }catch(e){
-    console.error('save failed', e);
+    lastStorageError = `Network error saving state: ${e.message}`;
+    console.error(lastStorageError);
+    return { ...state, __saveFailed: true };
   }
   return state;
 }
@@ -1220,7 +1252,11 @@ async function doBuzz(team){
   if(state.locked || state.qIndex<0 || !state.revealed || state.buzzedTeam || state.wrongTeams.includes(team.id)) return;
   state.buzzedTeam = team.id;
   state.buzzedAt = Date.now();
-  await saveState(state);
+  const result = await saveState(state);
+  if(result.__saveFailed){
+    const feedback = document.getElementById('feedback');
+    if(feedback) feedback.textContent = "⚠️ Couldn't reach the game server — ask the host to check the Firebase database rules.";
+  }
 }
 
 function stopContestantPolling(){
