@@ -336,6 +336,66 @@
   .win-reveal .btn{margin-top:22px;}
   .confetti-piece{position:fixed;top:-20px;border-radius:2px;z-index:82;}
 
+  /* ---------- Access / password gate ---------- */
+  .lock-badge{font-size:40px;margin-bottom:6px;}
+  .access-input{
+    display:block;width:100%;max-width:320px;margin:14px auto 0;font-family:'JetBrains Mono',monospace;font-size:18px;
+    letter-spacing:.12em;text-align:center;padding:13px 14px;border-radius:12px;
+    background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.18);color:var(--gold-soft);
+    text-transform:uppercase;
+  }
+  .access-input:focus{outline:2px solid var(--gold-soft);}
+
+  /* ---------- KBC-style MCQ option grid ---------- */
+  .kbc-qwrap{
+    max-width:640px;margin:20px auto 0;border-radius:18px;padding:2px;
+    background:linear-gradient(135deg, var(--gold), #6a3fa0, var(--peacock-light), var(--gold));
+    background-size:300% 300%;animation:kbcBorderFlow 6s ease infinite;
+  }
+  @keyframes kbcBorderFlow{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
+  .kbc-qinner{
+    background:linear-gradient(180deg, #1b1240, #0d0826);border-radius:16px;padding:18px 20px 20px;
+  }
+  .kbc-qtext{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:18px;text-align:center;line-height:1.4;color:var(--cream);}
+  .kbc-option-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;}
+  @media (max-width:480px){.kbc-option-grid{grid-template-columns:1fr;}}
+  .kbc-option{
+    display:flex;align-items:center;gap:10px;text-align:left;font-family:'Mukta',sans-serif;font-size:14px;font-weight:600;
+    color:var(--cream);background:linear-gradient(135deg, rgba(240,180,41,0.10), rgba(255,255,255,0.03));
+    border:1.5px solid rgba(240,180,41,0.35);border-radius:12px;padding:11px 14px;cursor:pointer;
+    transition:transform .12s ease, border-color .12s ease, background .12s ease;
+  }
+  .kbc-option:hover:not(:disabled):not(.noclick){transform:translateY(-2px);border-color:var(--gold-soft);background:rgba(240,180,41,0.16);}
+  .kbc-option:disabled, .kbc-option.noclick{cursor:default;}
+  .kbc-option .opt-letter{
+    flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;background:rgba(240,180,41,0.22);color:var(--gold-soft);
+  }
+  .kbc-option.selected{border-color:var(--gold);background:rgba(240,180,41,0.28);box-shadow:0 0 0 2px rgba(240,180,41,.35) inset;}
+  .kbc-option.selected .opt-letter{background:var(--gold);color:#2a1c00;}
+  .kbc-option.correct{border-color:var(--success);background:rgba(73,183,136,0.28);box-shadow:0 0 14px rgba(73,183,136,.4);animation:kbcCorrectPulse .6s ease;}
+  .kbc-option.correct .opt-letter{background:var(--success);color:#04241a;}
+  .kbc-option.wrong{border-color:var(--danger);background:rgba(209,73,91,0.26);}
+  .kbc-option.wrong .opt-letter{background:var(--danger);color:#2a0509;}
+  .kbc-option.dim{opacity:.4;}
+  @keyframes kbcCorrectPulse{0%{transform:scale(.96);}55%{transform:scale(1.035);}100%{transform:scale(1);}}
+  .kbc-suspense .kbc-option:not(.dim-suspense){animation:kbcSuspensePulse 1.1s ease-in-out infinite;}
+  @keyframes kbcSuspensePulse{0%,100%{filter:brightness(1);}50%{filter:brightness(1.4);}}
+  .kbc-hint{text-align:center;font-family:'JetBrains Mono',monospace;font-size:11px;opacity:.55;margin-top:12px;letter-spacing:.05em;}
+
+  /* ---------- Projector display page ---------- */
+  .display-wrap{max-width:1400px;}
+  .display-title{text-align:center;font-family:'Cinzel',serif;font-size:clamp(22px,3vw,32px);color:var(--gold-soft);letter-spacing:.04em;}
+  .display-kbc .kbc-qwrap{max-width:900px;}
+  .display-kbc .kbc-qtext{font-size:clamp(20px,2.6vw,30px);}
+  .display-kbc .kbc-option{font-size:clamp(15px,1.7vw,20px);padding:16px 18px;}
+  .display-kbc .kbc-option .opt-letter{width:34px;height:34px;font-size:15px;}
+  .display-race .race-board{max-width:1200px;margin:34px auto 0;}
+  .display-race .pole-col svg{max-width:190px;}
+  .display-race .pole-name{font-size:17px;}
+  .display-race .pole-steps{font-size:14px;}
+  .display-waiting{text-align:center;opacity:.55;font-family:'JetBrains Mono',monospace;font-size:14px;margin-top:26px;}
+
   .foot-note{text-align:center;font-size:12px;opacity:.5;margin-top:36px;position:relative;z-index:2;}
 
   a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2.5px solid var(--gold-soft);outline-offset:2px;}
@@ -440,26 +500,26 @@ const STATE_KEY = 'dahihandi:state';
 const POLL_MS = 700;
 
 const QUESTIONS = [
-  {q:"What term describes a startup valued at over $1 billion?", a:"Unicorn"},
-  {q:"Who co-founded Apple alongside Steve Jobs?", a:"Steve Wozniak"},
-  {q:"What does MVP stand for in startup lingo?", a:"Minimum Viable Product"},
-  {q:"What is it called when a startup fundamentally changes its business direction?", a:"A pivot"},
-  {q:"What do we call building a company using only its own revenue, without outside funding?", a:"Bootstrapping"},
-  {q:"What does B2B stand for?", a:"Business to Business"},
-  {q:"What is the practice of raising small amounts of money from a large number of people called?", a:"Crowdfunding"},
-  {q:"What is a short, persuasive speech used to spark interest in a business idea called?", a:"An elevator pitch"},
-  {q:"Which Indian government initiative, launched in 2016, aims to promote startups?", a:"Startup India"},
-  {q:"What does the acronym SWOT stand for in business strategy?", a:"Strengths, Weaknesses, Opportunities, Threats"},
-  {q:"What does IPO stand for?", a:"Initial Public Offering"},
-  {q:"What term describes innovation that creates a new market and eventually displaces an established one?", a:"Disruptive innovation"},
-  {q:"What does ROI stand for?", a:"Return on Investment"},
-  {q:"Who founded Tesla and SpaceX?", a:"Elon Musk"},
-  {q:"What is the funding round typically called that follows seed funding?", a:"Series A"},
-  {q:"What term refers to a company's unique factor that competitors can't easily copy?", a:"Competitive advantage / USP"},
-  {q:"What do you call an experienced entrepreneur who invests personal funds in early-stage startups?", a:"An angel investor"},
-  {q:"What is the process of testing a stripped-down version of a product with real users called?", a:"Prototyping / a pilot"},
-  {q:"What does CAC stand for in startup metrics?", a:"Customer Acquisition Cost"},
-  {q:"What is a group of startups working together in a shared support program called?", a:"An incubator / accelerator cohort"},
+  {q:"What term describes a startup valued at over $1 billion?", options:["Decacorn","Unicorn","Centaur","Gazelle"], correct:1},
+  {q:"Who co-founded Apple alongside Steve Jobs?", options:["Bill Gates","Elon Musk","Steve Wozniak","Larry Page"], correct:2},
+  {q:"What does MVP stand for in startup lingo?", options:["Most Valuable Product","Minimum Viable Product","Market Value Proposition","Maximum Viable Product"], correct:1},
+  {q:"What is it called when a startup fundamentally changes its business direction?", options:["Scaling","Bootstrapping","A Pivot","Merging"], correct:2},
+  {q:"What do we call building a company using only its own revenue, without outside funding?", options:["Crowdfunding","Bootstrapping","Venture Capital","Angel Funding"], correct:1},
+  {q:"What does B2B stand for?", options:["Brand to Brand","Business to Business","Business to Buyer","Buyer to Business"], correct:1},
+  {q:"What is the practice of raising small amounts of money from a large number of people called?", options:["Venture Capital","Bootstrapping","Crowdfunding","Angel Investing"], correct:2},
+  {q:"What is a short, persuasive speech used to spark interest in a business idea called?", options:["Business Plan","Elevator Pitch","Mission Statement","Executive Summary"], correct:1},
+  {q:"Which Indian government initiative, launched in 2016, aims to promote startups?", options:["Make in India","Digital India","Startup India","Skill India"], correct:2},
+  {q:"What does SWOT stand for in business strategy?", options:["Strengths, Weaknesses, Opportunities, Threats","Strategy, Workforce, Operations, Technology","Strengths, Workflows, Objectives, Targets","Strategy, Weaknesses, Operations, Threats"], correct:0},
+  {q:"What does IPO stand for?", options:["International Public Organization","Initial Public Offering","Investment Purchase Option","Initial Private Offering"], correct:1},
+  {q:"What term describes innovation that creates a new market and eventually displaces an established one?", options:["Incremental Innovation","Sustaining Innovation","Disruptive Innovation","Open Innovation"], correct:2},
+  {q:"What does ROI stand for?", options:["Return on Investment","Rate of Investment","Revenue on Income","Return on Income"], correct:0},
+  {q:"Who founded Tesla and SpaceX?", options:["Jeff Bezos","Elon Musk","Mark Zuckerberg","Larry Ellison"], correct:1},
+  {q:"What is the funding round typically called that follows seed funding?", options:["Series A","Series B","Pre-Seed","Series C"], correct:0},
+  {q:"What term refers to a company's unique factor that competitors can't easily copy?", options:["Market Share","Competitive Advantage","Revenue Model","Business Cycle"], correct:1},
+  {q:"What do you call an experienced entrepreneur who invests personal funds in early-stage startups?", options:["Venture Capitalist","Angel Investor","Fund Manager","Business Consultant"], correct:1},
+  {q:"What is the process of testing a stripped-down version of a product with real users called?", options:["Prototyping","Market Saturation","Outsourcing","Scaling"], correct:0},
+  {q:"What does CAC stand for in startup metrics?", options:["Customer Annual Cost","Customer Acquisition Cost","Company Acquisition Capital","Customer Activity Count"], correct:1},
+  {q:"What is a group of startups working together in a shared support program called?", options:["Venture Network","Startup Cluster","Incubator / Accelerator Cohort","Business Consortium"], correct:2},
 ];
 
 /* ============================= STORAGE BACKEND =============================
@@ -568,11 +628,14 @@ function defaultState(){
     teamCount: DEFAULT_TEAMS,
     lobbyOpen: false,
     roomCode: null,
+    accessCode: 'JANMASHTAMI',
     joinRequests: [], // {id, name, teamId, ts, status: pending|approved|denied|revoked}
     qIndex: -1,
     revealed: false,
     buzzedTeam: null,
     buzzedAt: null,
+    selectedAnswer: null,
+    revealedAnswer: false,
     wrongTeams: [],
     steps,
     totalSteps: TOTAL_STEPS,
@@ -610,7 +673,10 @@ function normalizeState(s){
   if(!s.teamCount) s.teamCount = DEFAULT_TEAMS;
   if(s.lobbyOpen === undefined) s.lobbyOpen = false;
   if(s.roomCode === undefined) s.roomCode = null;
+  if(!s.accessCode) s.accessCode = 'JANMASHTAMI';
   if(!s.joinRequests) s.joinRequests = [];
+  if(s.selectedAnswer === undefined) s.selectedAnswer = null;
+  if(s.revealedAnswer === undefined) s.revealedAnswer = false;
   return s;
 }
 
@@ -756,6 +822,29 @@ function logoSvg(){
 
 function matkiHeroSvg(){
   return `<svg viewBox="0 0 260 300" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="clayBody" cx="34%" cy="28%" r="80%">
+        <stop offset="0%" stop-color="#e2924a"/>
+        <stop offset="45%" stop-color="#c1701f"/>
+        <stop offset="80%" stop-color="#9a5714"/>
+        <stop offset="100%" stop-color="#7a430e"/>
+      </radialGradient>
+      <linearGradient id="clayNeck" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#c9873f"/>
+        <stop offset="100%" stop-color="#8a4b16"/>
+      </linearGradient>
+      <radialGradient id="makhanMound" cx="38%" cy="20%" r="85%">
+        <stop offset="0%" stop-color="#fffef7"/>
+        <stop offset="40%" stop-color="#fdf3d0"/>
+        <stop offset="75%" stop-color="#f3dd9a"/>
+        <stop offset="100%" stop-color="#e2c377"/>
+      </radialGradient>
+      <linearGradient id="makhanDrip" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#fffaeb"/>
+        <stop offset="100%" stop-color="#f1d894"/>
+      </linearGradient>
+    </defs>
+
     <ellipse cx="130" cy="278" rx="78" ry="12" fill="#000" opacity="0.28"/>
 
     <!-- peacock feather emerging from the opening, upper-left -->
@@ -784,21 +873,22 @@ function matkiHeroSvg(){
     </g>
 
     <!-- rim / neck -->
-    <path d="M96 96 L92 76 Q130 60 168 76 L164 96Z" fill="#a85a1a" stroke="#5c3a1a" stroke-width="2"/>
+    <path d="M96 96 L92 76 Q130 60 168 76 L164 96Z" fill="url(#clayNeck)" stroke="#5c3a1a" stroke-width="2"/>
     <ellipse cx="130" cy="76" rx="38" ry="12" fill="#8a4b16" stroke="#5c3a1a" stroke-width="2"/>
     <ellipse cx="130" cy="76" rx="38" ry="12" fill="none" stroke="#f7d685" stroke-width="1.2" opacity="0.6"/>
-    <ellipse cx="130" cy="96" rx="34" ry="8" fill="#7a3f10"/>
+    <ellipse cx="130" cy="96" rx="34" ry="8" fill="#6a380d"/>
 
-    <!-- rounded matka body -->
+    <!-- rounded matka body, warm clay gradient for a real terracotta feel -->
     <path d="M96 92
              C58 118, 42 168, 54 208
              C66 250, 96 274, 130 274
              C164 274, 194 250, 206 208
              C218 168, 202 118, 164 92
              C150 82, 110 82, 96 92Z"
-          fill="#c1701f" stroke="#6f3a10" stroke-width="2.5"/>
-    <path d="M96 92 C58 118, 42 168, 54 208 C64 244, 88 266, 116 272
-             C92 258, 74 228, 70 190 C66 148, 78 112, 104 92Z" fill="#d98431" opacity="0.55"/>
+          fill="url(#clayBody)" stroke="#5c3410" stroke-width="2.5"/>
+    <!-- soft rim highlight for a glazed-clay sheen -->
+    <path d="M104 98 C78 122, 64 160, 70 196" stroke="#f2c988" stroke-width="6" fill="none" opacity="0.35" stroke-linecap="round"/>
+    <path d="M188 118 C198 148, 196 182, 180 214" stroke="#5c3410" stroke-width="8" fill="none" opacity="0.22" stroke-linecap="round"/>
 
     <!-- decorative dotted belt -->
     <path d="M55 176 Q130 200 205 176" stroke="#5c3a1a" stroke-width="2" fill="none" opacity="0.8"/>
@@ -809,16 +899,16 @@ function matkiHeroSvg(){
     </g>
     <path d="M64 140 Q130 158 196 140" stroke="#f7d685" stroke-width="1.2" fill="none" opacity="0.35"/>
 
-    <!-- overflowing white dahi drip, like curd spilling from the pot -->
-    <path d="M100 78
-             Q108 72 130 72
-             Q152 72 160 78
-             L160 100 Q150 118 146 140 Q142 168 150 178 Q140 190 136 172
-             Q130 150 128 128 Q126 108 118 100
-             Q112 112 116 138 Q120 162 110 170 Q102 158 104 132
-             Q106 108 100 100 Z"
-          fill="#fdfaf1"/>
-    <path d="M108 90 Q104 108 112 128" stroke="#e9e1c8" stroke-width="1.6" fill="none" opacity="0.6"/>
+    <!-- a real mound of makhan (butter) heaped up and overflowing the neck -->
+    <path d="M99 82 Q104 62 130 60 Q156 62 161 82
+             Q168 88 160 96 Q150 84 130 84 Q110 84 100 96
+             Q92 88 99 82Z" fill="url(#makhanMound)" stroke="#e0c07f" stroke-width="1"/>
+    <ellipse cx="118" cy="70" rx="9" ry="6" fill="#fffef9" opacity="0.85"/>
+    <ellipse cx="142" cy="74" rx="7" ry="5" fill="#fffef9" opacity="0.7"/>
+    <!-- soft makhan drips sliding down the outside of the pot -->
+    <path d="M104 92 Q98 112 104 130 Q108 142 100 148 Q94 136 96 118 Q98 104 104 92Z" fill="url(#makhanDrip)"/>
+    <path d="M154 92 Q162 108 156 124 Q152 134 160 140 Q166 126 162 110 Q159 100 154 92Z" fill="url(#makhanDrip)"/>
+    <path d="M126 88 Q122 108 128 126 Q131 136 124 142 Q118 128 121 110 Q123 98 126 88Z" fill="url(#makhanDrip)" opacity="0.9"/>
 
     <!-- side handles -->
     <path d="M96 108 Q78 100 68 112" stroke="#5c3a1a" stroke-width="4" fill="none" stroke-linecap="round"/>
@@ -857,17 +947,19 @@ function poleSvg(team, steps, total, isBroken){
       <path d="M40 46 L50 60 L34 64Z" fill="#8a4b16"/>
       <path d="M62 40 L70 58 L82 44Z" fill="#b5651d"/>
       <path d="M50 32 L58 20 L66 34Z" fill="#8a4b16"/>
-      <circle cx="60" cy="30" r="3" fill="#f0b429"/>
-      <circle cx="72" cy="46" r="2.4" fill="#f0b429"/>
-      <circle cx="46" cy="52" r="2.2" fill="#f0b429"/>
+      <circle cx="60" cy="26" r="3.4" fill="#fffaeb"/>
+      <circle cx="70" cy="40" r="2.8" fill="#fdf3d0"/>
+      <circle cx="44" cy="48" r="2.6" fill="#fffaeb"/>
+      <circle cx="66" cy="56" r="2.2" fill="#fdf3d0"/>
+      <circle cx="50" cy="60" r="2.4" fill="#fffaeb"/>
     </g>` : `
     <g>
-      <path d="M42 44 Q60 30 78 44 L74 70 Q60 78 46 70 Z" fill="#b5651d" stroke="#6f3a10" stroke-width="2"/>
+      <path d="M42 44 Q60 30 78 44 L74 70 Q60 78 46 70 Z" fill="#c1701f" stroke="#6f3a10" stroke-width="2"/>
+      <path d="M46 48 Q56 62 58 70" stroke="#e2924a" stroke-width="3" fill="none" opacity="0.5" stroke-linecap="round"/>
       <ellipse cx="60" cy="44" rx="18" ry="6" fill="#8a4b16"/>
       <ellipse cx="60" cy="44" rx="18" ry="6" fill="none" stroke="#6f3a10" stroke-width="1.6"/>
-      <circle cx="52" cy="43" r="2" fill="#f7d685"/>
-      <circle cx="60" cy="41" r="2" fill="#f7d685"/>
-      <circle cx="68" cy="43" r="2" fill="#f7d685"/>
+      <path d="M45 38 Q49 28 60 27 Q71 28 75 38 Q78 41 74 45 Q69 37 60 37 Q51 37 46 45 Q42 41 45 38Z" fill="#fdf6e2" stroke="#e6cd93" stroke-width="0.8"/>
+      <ellipse cx="55" cy="32" rx="4" ry="2.6" fill="#fffef9" opacity="0.9"/>
       <path d="M38 46 Q30 40 24 44" stroke="#f0b429" stroke-width="3" fill="none" stroke-linecap="round"/>
       <circle cx="24" cy="44" r="3" fill="#e8734a"/>
       <path d="M82 46 Q90 40 96 44" stroke="#f0b429" stroke-width="3" fill="none" stroke-linecap="round"/>
@@ -920,6 +1012,39 @@ function renderRaceBoard(state, containerId){
       <div class="pole-steps">${steps} / ${state.totalSteps}${isWinner?' 🏆':''}</div>
     </div>`;
   }).join('');
+}
+
+function renderKbcOptions(containerEl, q, {selected=null, revealed=false, interactive=false, suspense=false, onSelect=null} = {}){
+  if(!containerEl) return;
+  if(!q){ containerEl.innerHTML = ''; return; }
+  containerEl.innerHTML = `
+    <div class="kbc-qwrap ${suspense?'kbc-suspense':''}">
+      <div class="kbc-qinner">
+        <div class="kbc-qtext">${escapeHtml(q.q)}</div>
+        <div class="kbc-option-grid" id="kbcOptGrid"></div>
+      </div>
+    </div>`;
+  const grid = containerEl.querySelector('#kbcOptGrid');
+  grid.innerHTML = q.options.map((opt,i)=>{
+    let cls = 'kbc-option';
+    if(revealed){
+      if(i===q.correct) cls += ' correct';
+      else if(i===selected) cls += ' wrong';
+      else cls += ' dim';
+    } else if(selected===i){
+      cls += ' selected';
+    }
+    if(!interactive) cls += ' noclick';
+    return `<button type="button" class="${cls}" data-idx="${i}" ${interactive?'':'disabled'}>
+      <span class="opt-letter">${String.fromCharCode(65+i)}</span>
+      <span class="opt-text">${escapeHtml(opt)}</span>
+    </button>`;
+  }).join('');
+  if(interactive && onSelect){
+    grid.querySelectorAll('.kbc-option').forEach(b=>{
+      b.addEventListener('click', ()=> onSelect(parseInt(b.dataset.idx,10)));
+    });
+  }
 }
 
 function escapeHtml(s){
@@ -978,7 +1103,7 @@ function triggerWinSequence(state, playSound){
     reveal.innerHTML = `
       ${winnerFigureSvg(color)}
       <h2>${escapeHtml(name)} wins!</h2>
-      <p>The matka is broken — Jai Shri Krishna! 🪈🦚</p>
+      <p>The makhan-filled matka is broken — Jai Shri Krishna! 🧈🪈🦚</p>
       <button class="btn gold" id="winCloseBtn">Close</button>
     `;
     document.body.appendChild(reveal);
@@ -1011,29 +1136,35 @@ function renderLanding(){
       <div class="eyebrow">Janmashtami Finale</div>
       <h2>Dahi Handi <span>Quiz Race</span></h2>
       <div class="matki-hero"><div class="matki-glow"></div>${matkiHeroSvg()}</div>
-      <p>Buzz in first, answer right, and climb the pole one step at a time. First team to break the matka wins the finale.</p>
+      <p>Buzz in first, pick the right answer from four options, and climb the pole one step at a time. First team to break the makhan-filled matka wins the finale.</p>
     </div>
     <div class="role-grid">
       <a class="role-card host" href="?role=host">
         <div class="role-icon">🖥️</div>
         <div class="role-title">Host</div>
-        <div class="role-sub">Set the number of teams, open the lobby, and run the quiz from the projector or laptop.</div>
+        <div class="role-sub">Run the quiz: manage teams, approve contestants, ask questions, and judge buzzes.</div>
+      </a>
+      <a class="role-card host" href="?role=display" style="border-color:rgba(90,141,238,0.28)">
+        <div class="role-icon">📽️</div>
+        <div class="role-title">Display</div>
+        <div class="role-sub">Second screen for the projector — big KBC-style question board and the live matka race, no controls.</div>
       </a>
       <a class="role-card contestant" href="?role=contestant">
         <div class="role-icon">🙋</div>
         <div class="role-title">Contestant</div>
-        <div class="role-sub">Enter the room code from your host, pick your team, and wait for approval to join.</div>
+        <div class="role-sub">Enter the access password and room code from your host, pick your team, and wait for approval.</div>
       </a>
     </div>
-    <div class="foot-note">Contestants need a room code from the host — this keeps outsiders from joining the round.</div>
+    <div class="foot-note">Contestants need the access password and a room code from the host — this keeps outsiders from joining the round. Run Host on the control laptop and Display on the projector screen at the same time.</div>
   `;
 }
 
 /* ============================= CONTESTANT FLOW ============================= */
 let myRequestId = null;
 let mySelectedTeamId = null;
-let contestantPhase = 'join';
+let contestantPhase = 'password';
 let contestantPollHandle = null;
+let contestantUnlocked = false;
 
 function contestantTopbar(sub){
   return `<div class="topbar">
@@ -1041,6 +1172,37 @@ function contestantTopbar(sub){
       <a href="?" class="btn ghost" style="text-decoration:none;">← Home</a>
     </div>
     <div class="feather-divider"></div>`;
+}
+
+function renderContestantPassword(errorMsg){
+  app.innerHTML = `
+    ${bannerHtml()}
+    ${contestantTopbar('Contestant Entry')}
+    <div class="hero small">
+      <div class="lock-badge">🔒</div>
+      <div class="eyebrow">Access Required</div>
+      <h2>Enter the <span>Access Password</span></h2>
+      <p>Your host has this password. It keeps the contestant page limited to people actually playing the finale.</p>
+      <input class="access-input" id="accessInput" maxlength="30" autocomplete="off" placeholder="PASSWORD">
+      ${errorMsg ? `<div class="form-error">${escapeHtml(errorMsg)}</div>` : ''}
+      <button class="btn gold" id="accessSubmitBtn" style="margin-top:16px;">Unlock</button>
+    </div>
+  `;
+  const input = document.getElementById('accessInput');
+  const submit = document.getElementById('accessSubmitBtn');
+  const tryUnlock = async ()=>{
+    const state = await loadState();
+    if(input.value.trim().toLowerCase() === (state.accessCode||'').trim().toLowerCase()){
+      contestantUnlocked = true;
+      contestantPhase = 'join';
+      renderContestantJoinForm(state);
+    } else {
+      renderContestantPassword("That password isn't right — check with your host.");
+    }
+  };
+  submit.addEventListener('click', tryUnlock);
+  input.addEventListener('keydown', (e)=>{ if(e.key==='Enter') tryUnlock(); });
+  input.focus();
 }
 
 function renderContestantJoinForm(state, errorMsg){
@@ -1173,6 +1335,7 @@ function renderContestantGameShell(team){
       </div>
       <button class="buzz-btn" id="buzzBtn" style="background:linear-gradient(160deg, ${team.color}, ${team.color}cc);" disabled>WAIT</button>
       <div class="buzz-feedback" id="feedback"></div>
+      <div id="optionsWrap" style="width:100%;max-width:640px;"></div>
       <div id="miniBoard" class="race-board" style="margin-top:26px;max-width:640px;"></div>
     </div>
   `;
@@ -1203,6 +1366,8 @@ async function contestantGameTick(team, state, displayName){
     qBox.classList.add('waiting');
     qtext.textContent = `${state.names[state.winner]||state.winner} broke the matka!`;
     btn.disabled = true; btn.textContent = 'FINISHED';
+    const optWrap = document.getElementById('optionsWrap');
+    if(optWrap) optWrap.innerHTML = '';
     return;
   }
 
@@ -1213,6 +1378,8 @@ async function contestantGameTick(team, state, displayName){
     qtext.textContent = 'Get ready — the host will show the next question here.';
     btn.disabled = true; btn.textContent = 'WAIT';
     feedback.textContent = '';
+    const optWrap = document.getElementById('optionsWrap');
+    if(optWrap) optWrap.innerHTML = '';
     return;
   }
 
@@ -1223,27 +1390,44 @@ async function contestantGameTick(team, state, displayName){
 
   const iAmOut = state.wrongTeams.includes(team.id);
   const iBuzzed = state.buzzedTeam === team.id;
+  const optionsWrap = document.getElementById('optionsWrap');
 
   if(state.buzzedTeam){
     if(iBuzzed){
-      pill.textContent = '🎙️ You buzzed first! Answer now.';
+      const canPick = state.selectedAnswer===null && !state.revealedAnswer;
+      pill.textContent = canPick ? '🎙️ You buzzed first! Tap your answer.' : (state.revealedAnswer ? 'Answer revealed' : 'Answer locked in — waiting for host');
       btn.disabled = true; btn.textContent = 'BUZZED!';
-      feedback.textContent = 'Waiting for host to confirm your answer…';
+      feedback.textContent = canPick ? 'Choose one option below.' : '';
+      renderKbcOptions(optionsWrap, q, {
+        selected: state.selectedAnswer, revealed: state.revealedAnswer, interactive: canPick,
+        onSelect: (idx)=> doSelectAnswer(team, idx)
+      });
     } else {
       const bname = state.names[state.buzzedTeam] || state.buzzedTeam;
-      pill.textContent = `${bname} buzzed first`;
+      pill.textContent = state.revealedAnswer ? 'Answer revealed' : `${bname} buzzed first`;
       btn.disabled = true; btn.textContent = 'LOCKED';
       feedback.textContent = '';
+      renderKbcOptions(optionsWrap, q, {selected: state.selectedAnswer, revealed: state.revealedAnswer, interactive:false});
     }
   } else if(iAmOut){
     pill.textContent = 'You answered this one — waiting for next question';
     btn.disabled = true; btn.textContent = 'WAIT';
     feedback.textContent = '';
+    renderKbcOptions(optionsWrap, q, {interactive:false});
   } else {
     pill.textContent = 'Buzzer is live!';
     btn.disabled = false; btn.textContent = 'BUZZ';
     feedback.textContent = '';
+    renderKbcOptions(optionsWrap, q, {interactive:false});
   }
+}
+
+async function doSelectAnswer(team, idx){
+  playBuzzClick();
+  const state = await loadState();
+  if(state.locked || state.buzzedTeam !== team.id || state.selectedAnswer !== null || state.revealedAnswer) return;
+  state.selectedAnswer = idx;
+  await saveState(state);
 }
 
 async function doBuzz(team){
@@ -1300,10 +1484,7 @@ function startContestantPolling(){
 }
 
 function initContestantPage(){
-  (async ()=>{
-    const state = await loadState();
-    renderContestantJoinForm(state);
-  })();
+  renderContestantPassword();
 }
 
 /* ============================= HOST PAGE ============================= */
@@ -1320,6 +1501,7 @@ function renderHostShell(state){
     ${bannerHtml()}
     <div class="topbar">
       <div class="brand">${logoSvg()}<div class="brand-text"><div class="name">I&amp;E CELL</div><div class="tag">Dahi Handi Quiz Race — Host</div></div></div>
+      <a href="?role=display" target="_blank" class="btn ghost" style="text-decoration:none;">📽️ Open Projector Display ↗</a>
       <a href="?" class="btn ghost" style="text-decoration:none;">← Home</a>
     </div>
     <div class="feather-divider"></div>
@@ -1337,6 +1519,12 @@ function renderHostShell(state){
         <div class="room-code-label">ROOM CODE — share verbally with contestants only</div>
         <div class="room-code-display" id="roomCodeVal">${state.roomCode||'----'}</div>
       </div>` : `<div class="notice" style="margin-top:14px;">Lobby is closed. Open it so contestants can submit join requests.</div>`}
+      <div class="row" style="margin-top:16px;">
+        <label style="font-family:'JetBrains Mono',monospace;font-size:12.5px;opacity:.75;">CONTESTANT ACCESS PASSWORD</label>
+        <input type="text" id="accessCodeInput" value="${escapeHtml(state.accessCode)}" maxlength="30"
+          style="font-family:'JetBrains Mono',monospace;background:rgba(255,255,255,0.08);color:var(--gold-soft);
+          border:1px solid rgba(255,255,255,0.18);border-radius:9px;padding:9px 10px;font-size:14px;min-width:180px;">
+      </div>
     </div>
 
     <div class="panel">
@@ -1352,8 +1540,8 @@ function renderHostShell(state){
     <div class="q-box waiting" id="qBox" style="max-width:100%;">
       <div class="qnum" id="qnum">QUESTION</div>
       <div class="qtext" id="qtext">Press "Show Next Question" to begin.</div>
-      <div class="qnum" id="answerLine" style="margin-top:8px;color:#49b788;"></div>
     </div>
+    <div id="hostOptionsWrap"></div>
 
     <div class="buzz-banner empty" id="buzzBanner">No buzz yet</div>
 
@@ -1363,12 +1551,12 @@ function renderHostShell(state){
       <h3>Round control</h3>
       <div class="row">
         <button class="btn gold" id="nextBtn">Show Next Question →</button>
+        <button class="btn ghost" id="revealBtn" disabled>🔍 Reveal Answer (KBC suspense)</button>
         <button class="btn green" id="correctBtn" disabled>✓ Correct — climb!</button>
         <button class="btn red" id="wrongBtn" disabled>✗ Wrong</button>
         <button class="btn ghost" id="resetBuzzBtn">Reset buzzer</button>
       </div>
       <div class="row" style="margin-top:10px;">
-        <button class="btn ghost" id="showAnsBtn">Show/hide answer (host only)</button>
         <button class="btn ghost" id="resetGameBtn">Reset whole game</button>
       </div>
     </div>
@@ -1380,8 +1568,6 @@ function renderHostShell(state){
   `;
 }
 
-let hostAnswerVisible = false;
-
 async function hostTick(state){
   renderRaceBoard(state, 'board');
   maybeShowWin(state, false);
@@ -1390,22 +1576,24 @@ async function hostTick(state){
   const qBox = document.getElementById('qBox');
   const qnum = document.getElementById('qnum');
   const qtext = document.getElementById('qtext');
-  const answerLine = document.getElementById('answerLine');
   const banner = document.getElementById('buzzBanner');
   const correctBtn = document.getElementById('correctBtn');
   const wrongBtn = document.getElementById('wrongBtn');
+  const revealBtn = document.getElementById('revealBtn');
+  const optionsWrap = document.getElementById('hostOptionsWrap');
 
+  let q = null;
   if(state.qIndex < 0){
     qBox.classList.add('waiting');
     qnum.textContent = 'QUESTION';
     qtext.textContent = 'Press "Show Next Question" to begin.';
-    answerLine.textContent = '';
+    optionsWrap.innerHTML = '';
   } else {
-    const q = QUESTIONS[state.qIndex % QUESTIONS.length];
+    q = QUESTIONS[state.qIndex % QUESTIONS.length];
     qBox.classList.remove('waiting');
     qnum.textContent = `QUESTION ${(state.qIndex % QUESTIONS.length)+1} of ${QUESTIONS.length}`;
     qtext.textContent = q.q;
-    answerLine.textContent = hostAnswerVisible ? `Answer: ${q.a}` : '';
+    renderKbcOptions(optionsWrap, q, {selected: state.selectedAnswer, revealed: state.revealedAnswer, interactive:false});
   }
 
   if(state.buzzedTeam){
@@ -1415,15 +1603,18 @@ async function hostTick(state){
     banner.style.background = t.color+'26';
     banner.style.borderColor = t.color;
     banner.style.color = t.color;
-    banner.textContent = `🔔 ${name} buzzed first!`;
+    const pickText = state.selectedAnswer===null ? 'choosing an answer…' : `picked option ${String.fromCharCode(65+state.selectedAnswer)}`;
+    banner.textContent = `🔔 ${name} buzzed first — ${pickText}`;
     correctBtn.disabled = state.locked;
     wrongBtn.disabled = state.locked;
+    revealBtn.disabled = state.locked || state.selectedAnswer===null || state.revealedAnswer;
   } else {
     banner.className = 'buzz-banner empty';
     banner.style.background=''; banner.style.borderColor=''; banner.style.color='';
     banner.textContent = state.revealed ? 'Waiting for a team to buzz…' : 'No question live';
     correctBtn.disabled = true;
     wrongBtn.disabled = true;
+    revealBtn.disabled = true;
   }
 
   document.getElementById('nextBtn').disabled = state.locked;
@@ -1504,10 +1695,20 @@ async function hostNextQuestion(){
   state.revealed = true;
   state.buzzedTeam = null;
   state.buzzedAt = null;
+  state.selectedAnswer = null;
+  state.revealedAnswer = false;
   state.wrongTeams = [];
-  hostAnswerVisible = false;
   await saveState(state);
   playReveal();
+}
+async function hostRevealAnswer(){
+  getCtx();
+  const state = await loadState();
+  if(state.locked || !state.buzzedTeam || state.selectedAnswer===null || state.revealedAnswer) return;
+  state.revealedAnswer = true;
+  await saveState(state);
+  const q = QUESTIONS[state.qIndex % QUESTIONS.length];
+  if(state.selectedAnswer === q.correct){ playFanfare(); } else { playBell(); }
 }
 async function hostMarkCorrect(){
   const state = await loadState();
@@ -1522,6 +1723,8 @@ async function hostMarkCorrect(){
   state.revealed = false;
   state.buzzedTeam = null;
   state.buzzedAt = null;
+  state.selectedAnswer = null;
+  state.revealedAnswer = false;
   state.wrongTeams = [];
   await saveState(state);
   if(wonNow){
@@ -1537,25 +1740,34 @@ async function hostMarkWrong(){
   state.wrongTeams.push(state.buzzedTeam);
   state.buzzedTeam = null;
   state.buzzedAt = null;
+  state.selectedAnswer = null;
+  state.revealedAnswer = false;
   await saveState(state);
 }
 async function hostResetBuzz(){
   const state = await loadState();
   state.buzzedTeam = null;
   state.buzzedAt = null;
+  state.selectedAnswer = null;
+  state.revealedAnswer = false;
+  await saveState(state);
+}
+async function hostSetAccessCode(code){
+  const state = await loadState();
+  state.accessCode = code.trim() || 'JANMASHTAMI';
   await saveState(state);
 }
 async function hostResetGame(){
-  if(!confirm('Reset round progress? Team names, the lobby, room code, and join requests will be kept.')) return;
+  if(!confirm('Reset round progress? Team names, the lobby, room code, access password, and join requests will be kept.')) return;
   const state = await loadState();
   const fresh = defaultState();
   fresh.names = state.names;
   fresh.teamCount = state.teamCount;
   fresh.lobbyOpen = state.lobbyOpen;
   fresh.roomCode = state.roomCode;
+  fresh.accessCode = state.accessCode;
   fresh.joinRequests = state.joinRequests;
   await saveState(fresh);
-  hostAnswerVisible = false;
   lastWinnerShown = null;
   clearWinFx();
 }
@@ -1604,15 +1816,13 @@ function initHostPage(state0){
       renderTeamEdit(state);
     });
     document.getElementById('nextBtn').addEventListener('click', hostNextQuestion);
+    document.getElementById('revealBtn').addEventListener('click', hostRevealAnswer);
     document.getElementById('correctBtn').addEventListener('click', ()=>{ getCtx(); hostMarkCorrect(); });
     document.getElementById('wrongBtn').addEventListener('click', hostMarkWrong);
     document.getElementById('resetBuzzBtn').addEventListener('click', hostResetBuzz);
     document.getElementById('resetGameBtn').addEventListener('click', hostResetGame);
-    document.getElementById('showAnsBtn').addEventListener('click', async ()=>{
-      hostAnswerVisible = !hostAnswerVisible;
-      const state = await loadState();
-      await hostTick(state);
-    });
+    const accessInput = document.getElementById('accessCodeInput');
+    if(accessInput) accessInput.addEventListener('change', ()=> hostSetAccessCode(accessInput.value));
   }
 
   let namesInit = false;
@@ -1624,6 +1834,88 @@ function initHostPage(state0){
     if(sel && document.activeElement !== sel){
       sel.value = state.teamCount;
     }
+  };
+  loop();
+  setInterval(loop, POLL_MS);
+}
+
+/* ============================= DISPLAY (PROJECTOR) PAGE ============================= */
+function renderDisplayShell(){
+  app.innerHTML = `
+    ${bannerHtml()}
+    <div class="topbar">
+      <div class="brand">${logoSvg()}<div class="brand-text"><div class="name">I&amp;E CELL</div><div class="tag">Dahi Handi Quiz Race — Projector</div></div></div>
+      <a href="?" class="btn ghost" style="text-decoration:none;">← Home</a>
+    </div>
+    <div class="feather-divider"></div>
+    <div class="wrap display-wrap" style="padding:0;">
+      <div class="display-title" id="displayTitle">Waiting for the host to start…</div>
+      <div class="display-kbc" id="displayKbc"></div>
+      <div class="display-race">
+        <div id="displayBoard" class="race-board"></div>
+      </div>
+    </div>
+  `;
+}
+
+let displayLastQIndex = -2;
+let displayLastRevealed = false;
+
+async function displayTick(state){
+  const title = document.getElementById('displayTitle');
+  const kbcWrap = document.getElementById('displayKbc');
+
+  renderRaceBoard(state, 'displayBoard');
+  maybeShowWin(state, true);
+
+  if(state.locked){
+    title.textContent = `🏆 ${state.names[state.winner]||state.winner} broke the matka!`;
+    kbcWrap.innerHTML = '';
+    displayLastQIndex = state.qIndex; displayLastRevealed = false;
+    return;
+  }
+
+  if(state.qIndex < 0 || !state.revealed){
+    title.textContent = 'Waiting for the host to start…';
+    kbcWrap.innerHTML = `<div class="display-waiting">The next question will appear here.</div>`;
+    displayLastQIndex = state.qIndex; displayLastRevealed = false;
+    return;
+  }
+
+  const q = QUESTIONS[state.qIndex % QUESTIONS.length];
+
+  if(state.qIndex !== displayLastQIndex){
+    displayLastQIndex = state.qIndex;
+    displayLastRevealed = false;
+    playReveal();
+  }
+  if(state.revealedAnswer && !displayLastRevealed){
+    displayLastRevealed = true;
+    if(state.selectedAnswer === q.correct) playFanfare(); else playBell();
+  }
+  if(!state.revealedAnswer) displayLastRevealed = false;
+
+  title.textContent = `Question ${(state.qIndex % QUESTIONS.length)+1} of ${QUESTIONS.length}`;
+  const suspense = !!state.buzzedTeam && state.selectedAnswer===null;
+  renderKbcOptions(kbcWrap, q, {selected: state.selectedAnswer, revealed: state.revealedAnswer, interactive:false, suspense});
+
+  if(state.buzzedTeam){
+    const t = TEAM_POOL.find(x=>x.id===state.buzzedTeam);
+    const name = state.names[state.buzzedTeam] || t.defaultName;
+    const buzzNote = document.createElement('div');
+    buzzNote.className = 'display-waiting';
+    buzzNote.style.color = t.color;
+    buzzNote.style.opacity = '0.9';
+    buzzNote.textContent = `🔔 ${name} buzzed in`;
+    kbcWrap.appendChild(buzzNote);
+  }
+}
+
+function initDisplayPage(){
+  renderDisplayShell();
+  const loop = async ()=>{
+    const state = await loadState();
+    await displayTick(state);
   };
   loop();
   setInterval(loop, POLL_MS);
@@ -1646,6 +1938,8 @@ function renderInvalid(){
   } else if(role === 'host'){
     const state = await loadState();
     initHostPage(state);
+  } else if(role === 'display'){
+    initDisplayPage();
   } else if(role){
     renderInvalid();
   } else {
