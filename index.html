@@ -308,15 +308,7 @@
   }
   .team-edit-row input:focus{outline:2px solid var(--gold-soft);}
 
-  /* ---------- Timer ---------- */
-  .timer-big{display:flex;align-items:baseline;justify-content:center;gap:8px;margin:16px auto 4px;font-family:'JetBrains Mono',monospace;}
-  .timer-big .timer-num{font-size:56px;font-weight:800;color:var(--gold);text-shadow:0 0 18px rgba(240,180,41,.4);min-width:1.4em;text-align:center;}
-  .timer-big .timer-lbl{font-size:13px;opacity:.6;letter-spacing:.08em;text-transform:uppercase;}
-  .timer-big.urgent .timer-num{color:var(--danger);animation:timerPulse .6s ease-in-out infinite;}
-  .timer-big.expired .timer-num{color:var(--danger);}
-  @keyframes timerPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.14);}}
-  .display-wrap .timer-big .timer-num{font-size:clamp(70px,11vw,150px);}
-  .display-wrap .timer-big .timer-lbl{font-size:16px;}
+  
 
   /* ---------- Win sequence overlay ---------- */
   .winfx-el{position:fixed;z-index:80;}
