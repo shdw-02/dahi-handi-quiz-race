@@ -78,13 +78,9 @@
     background:radial-gradient(circle at 35% 35%, #fffdf3, var(--moon) 60%, #e9d9a8 100%);
     box-shadow:0 0 40px 10px rgba(255,246,224,.25);opacity:.9;}
 
-  /* Krishna silhouette — abstract, respectful, low-opacity backdrop */
   .krishna-silhouette{position:absolute;top:0;left:50%;transform:translateX(-50%);width:min(640px,120vw);opacity:.10;z-index:0;}
-
-  /* Vrindavan skyline silhouette at the base */
   .vrindavan-skyline{position:absolute;bottom:0;left:0;width:100%;opacity:.28;}
 
-  /* Circuit / innovation overlay */
   .circuit-overlay{position:absolute;inset:0;width:100%;height:100%;opacity:.16;}
   .circuit-overlay .node{animation:nodePulse 3.4s ease-in-out infinite;}
   .circuit-overlay .node:nth-child(3n){animation-delay:.7s;}
@@ -93,7 +89,6 @@
   .circuit-overlay .wire{stroke-dasharray:5 7;animation:wireFlow 6s linear infinite;}
   @keyframes wireFlow{to{stroke-dashoffset:-120;}}
 
-  /* Fireflies */
   .firefly{position:absolute;width:3px;height:3px;border-radius:50%;background:var(--gold-soft);
     box-shadow:0 0 6px 2px rgba(247,214,133,.75);animation:fireflyDrift linear infinite;}
   @keyframes fireflyDrift{
@@ -104,7 +99,6 @@
     100%{transform:translate(-14px,-70px);opacity:0;}
   }
 
-  /* Falling petals */
   .petal{position:absolute;top:-24px;border-radius:60% 0 60% 0;animation:petalFall linear infinite;}
   @keyframes petalFall{
     0%{transform:translateY(0) rotate(0deg);opacity:0;}
@@ -113,7 +107,6 @@
     100%{transform:translateY(112vh) rotate(340deg);opacity:0;}
   }
 
-  /* Golden particles flowing upward toward the Matki */
   .rise-particle{position:absolute;bottom:-10px;width:4px;height:4px;border-radius:50%;
     background:radial-gradient(circle, #fffdf3, var(--gold) 70%);
     box-shadow:0 0 8px 2px rgba(240,180,41,.6);animation:riseUp linear infinite;}
@@ -134,33 +127,28 @@
     mask-image:linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
   }
 
-  /* ---------- Header / logo ---------- */
   .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 4px 8px;flex-wrap:wrap;position:relative;z-index:2;}
   .brand{display:flex;align-items:center;gap:12px;}
   .brand svg{width:46px;height:46px;flex-shrink:0;}
   .brand-text .name{font-family:'Cinzel',serif;font-size:19px;font-weight:700;letter-spacing:.04em;color:var(--cream);}
   .brand-text .tag{font-size:11.5px;color:var(--gold-soft);font-family:'JetBrains Mono',monospace;letter-spacing:.08em;}
 
-  /* ---------- Landing / hero ---------- */
   .hero{text-align:center;padding:18px 10px 8px;position:relative;}
   .hero.small{padding-top:6px;}
   .hero h2{font-family:'Cinzel',serif;font-size:clamp(26px,4.4vw,44px);color:var(--cream);line-height:1.2;position:relative;font-weight:700;}
   .hero h2 span{color:var(--gold);}
   .hero p{max-width:620px;margin:14px auto 0;color:var(--cream);opacity:.8;font-size:15.5px;line-height:1.6;position:relative;}
 
-  /* ---------- Matki hero graphic ---------- */
   .matki-hero{position:relative;width:min(230px,54vw);margin:6px auto 0;animation:matkiFloat 5s ease-in-out infinite;filter:drop-shadow(0 0 26px rgba(240,180,41,.35));}
   @keyframes matkiFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-9px);}}
   .matki-glow{position:absolute;left:50%;top:56%;transform:translate(-50%,-50%);width:210%;height:210%;
     background:radial-gradient(circle, rgba(240,180,41,.34) 0%, rgba(240,180,41,.10) 45%, transparent 72%);
     filter:blur(4px);z-index:0;pointer-events:none;}
 
-  /* ---------- Bansuri (flute) ---------- */
   .bansuri-wrap{position:absolute;top:2px;right:2%;width:min(210px,40vw);opacity:0;transform:translate(30px,-14px) rotate(28deg);
     animation:bansuriIn 1.1s .35s cubic-bezier(.2,.85,.3,1.1) forwards;pointer-events:none;z-index:1;}
   @keyframes bansuriIn{to{opacity:.88;transform:translate(0,0) rotate(18deg);}}
 
-  /* ---------- Role selection (home) ---------- */
   .role-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:20px;margin-top:38px;max-width:640px;margin-left:auto;margin-right:auto;}
   .role-card{
     position:relative;border-radius:22px;padding:34px 22px 28px;text-align:center;text-decoration:none;color:var(--cream);
@@ -191,11 +179,11 @@
   .team-card .lbl{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:16px;}
   .team-card .sm{font-size:12px;opacity:.65;margin-top:4px;font-family:'JetBrains Mono',monospace;}
 
-  /* ---------- Lobby / join form ---------- */
   .notice{
     margin-top:22px;padding:16px 18px;border-radius:14px;background:rgba(255,255,255,0.05);
     border:1px solid rgba(255,255,255,0.12);text-align:center;font-size:14px;opacity:.85;
   }
+  .hint-line{max-width:520px;margin:10px auto 0;text-align:center;font-size:12.5px;opacity:.6;font-family:'JetBrains Mono',monospace;}
   .code-input{
     display:block;width:min(220px,100%);margin-top:8px;font-family:'JetBrains Mono',monospace;
     font-size:26px;letter-spacing:.35em;text-align:center;padding:12px 10px;border-radius:12px;
@@ -232,7 +220,6 @@
   .btn-sm.red{background:linear-gradient(135deg,var(--danger),#a83346);}
   .btn-sm.ghost{background:rgba(255,255,255,0.09);box-shadow:none;border:1px solid rgba(255,255,255,0.18);}
 
-  /* ---------- Team buzz page ---------- */
   .team-page{min-height:92vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:10px;}
   .status-pill{
     font-family:'JetBrains Mono',monospace;font-size:12.5px;letter-spacing:.06em;
@@ -261,7 +248,6 @@
   .buzz-feedback{text-align:center;font-family:'JetBrains Mono',monospace;font-size:13.5px;min-height:20px;margin-top:6px;}
   .team-mini-name{font-family:'Baloo 2',sans-serif;font-size:24px;font-weight:800;text-align:center;margin-top:8px;}
 
-  /* ---------- Race / poles ---------- */
   .race-board{
     display:grid;gap:8px;
     background:rgba(0,0,0,0.18);border-radius:20px;padding:18px 10px 8px;
@@ -275,7 +261,6 @@
   }
   .pole-steps{font-family:'JetBrains Mono',monospace;font-size:12px;opacity:.7;margin-top:1px;}
 
-  /* ---------- Host controls ---------- */
   .panel{
     background:rgba(255,255,255,0.045);border:1px solid rgba(255,255,255,0.09);
     border-radius:16px;padding:18px 20px;margin-top:18px;position:relative;z-index:2;
@@ -291,12 +276,9 @@
   .btn.gold{background:linear-gradient(135deg,var(--gold),#d99a1f);color:#2a1c00;}
   .btn.green{background:linear-gradient(135deg,var(--success),#2f9c6f);}
   .btn.red{background:linear-gradient(135deg,var(--danger),#a83346);}
+  .btn.sky{background:linear-gradient(135deg,var(--sky),#3f6fd6);}
   .btn.ghost{background:rgba(255,255,255,0.08);box-shadow:none;border:1px solid rgba(255,255,255,0.16);}
   .btn:disabled{opacity:.35;cursor:not-allowed;}
-  select.teamcount{
-    font-family:'JetBrains Mono',monospace;background:rgba(255,255,255,0.08);color:var(--cream);
-    border:1px solid rgba(255,255,255,0.18);border-radius:9px;padding:9px 10px;font-size:14px;
-  }
 
   .buzz-banner{
     text-align:center;padding:14px;border-radius:14px;font-family:'Baloo 2',sans-serif;
@@ -306,6 +288,18 @@
   .buzz-banner.hit{animation:pop .35s ease;}
   @keyframes pop{0%{transform:scale(.92);}60%{transform:scale(1.03);}100%{transform:scale(1);}}
 
+  .queue-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+  .queue-chip{
+    font-family:'JetBrains Mono',monospace;font-size:12.5px;padding:6px 12px;border-radius:999px;
+    border:1.5px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.05);
+  }
+  .queue-chip.current{border-color:var(--gold);background:rgba(240,180,41,0.18);color:var(--gold-soft);font-weight:700;}
+  .queue-chip.done-wrong{opacity:.5;text-decoration:line-through;}
+
+  .check-result{margin-top:10px;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:15px;text-align:center;}
+  .check-result.correct{color:var(--success);}
+  .check-result.wrong{color:var(--danger);}
+
   .team-edit-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
   .team-edit-row .swatch{width:16px;height:16px;border-radius:50%;flex-shrink:0;}
   .team-edit-row input{
@@ -313,6 +307,16 @@
     border-radius:8px;padding:8px 10px;color:var(--cream);font-family:'Mukta',sans-serif;font-size:14px;
   }
   .team-edit-row input:focus{outline:2px solid var(--gold-soft);}
+
+  /* ---------- Timer ---------- */
+  .timer-big{display:flex;align-items:baseline;justify-content:center;gap:8px;margin:16px auto 4px;font-family:'JetBrains Mono',monospace;}
+  .timer-big .timer-num{font-size:56px;font-weight:800;color:var(--gold);text-shadow:0 0 18px rgba(240,180,41,.4);min-width:1.4em;text-align:center;}
+  .timer-big .timer-lbl{font-size:13px;opacity:.6;letter-spacing:.08em;text-transform:uppercase;}
+  .timer-big.urgent .timer-num{color:var(--danger);animation:timerPulse .6s ease-in-out infinite;}
+  .timer-big.expired .timer-num{color:var(--danger);}
+  @keyframes timerPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.14);}}
+  .display-wrap .timer-big .timer-num{font-size:clamp(70px,11vw,150px);}
+  .display-wrap .timer-big .timer-lbl{font-size:16px;}
 
   /* ---------- Win sequence overlay ---------- */
   .winfx-el{position:fixed;z-index:80;}
@@ -336,7 +340,6 @@
   .win-reveal .btn{margin-top:22px;}
   .confetti-piece{position:fixed;top:-20px;border-radius:2px;z-index:82;}
 
-  /* ---------- Access / password gate ---------- */
   .lock-badge{font-size:40px;margin-bottom:6px;}
   .access-input{
     display:block;width:100%;max-width:320px;margin:14px auto 0;font-family:'JetBrains Mono',monospace;font-size:18px;
@@ -346,7 +349,6 @@
   }
   .access-input:focus{outline:2px solid var(--gold-soft);}
 
-  /* ---------- KBC-style MCQ option grid ---------- */
   .kbc-qwrap{
     max-width:640px;margin:20px auto 0;border-radius:18px;padding:2px;
     background:linear-gradient(135deg, var(--gold), #6a3fa0, var(--peacock-light), var(--gold));
@@ -383,7 +385,6 @@
   @keyframes kbcSuspensePulse{0%,100%{filter:brightness(1);}50%{filter:brightness(1.4);}}
   .kbc-hint{text-align:center;font-family:'JetBrains Mono',monospace;font-size:11px;opacity:.55;margin-top:12px;letter-spacing:.05em;}
 
-  /* ---------- Projector display page ---------- */
   .display-wrap{max-width:1400px;}
   .display-title{text-align:center;font-family:'Cinzel',serif;font-size:clamp(22px,3vw,32px);color:var(--gold-soft);letter-spacing:.04em;}
   .display-kbc .kbc-qwrap{max-width:900px;}
@@ -407,6 +408,7 @@
     .pole-steps{font-size:9.5px;}
     .feather-deco.tr,.feather-deco.bl{width:170px;}
     .bansuri-wrap{width:130px;top:-6px;}
+    .timer-big .timer-num{font-size:44px;}
   }
 </style>
 </head>
@@ -416,7 +418,6 @@
   <div class="moon"></div>
 
   <svg class="krishna-silhouette" id="krishnaSil" viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <!-- abstract, respectful silhouette: peacock-feather crown + flute-holding figure, no literal iconography -->
     <ellipse cx="320" cy="330" rx="150" ry="26" fill="#000" opacity="0.18"/>
     <path d="M320 60 C280 90 268 150 285 220 C295 258 310 288 320 320 C330 288 345 258 355 220 C372 150 360 90 320 60Z" fill="#fff6e0" opacity="0.9"/>
     <path d="M320 60 C300 92 296 150 305 200" stroke="#0a3733" stroke-width="2" opacity="0.4" fill="none"/>
@@ -484,20 +485,13 @@
 
 <script>
 /* ============================= CONFIG ============================= */
-const TEAM_POOL = [
-  {id:'A', defaultName:'Team Nand',      color:'#f0b429'},
-  {id:'B', defaultName:'Team Gokul',     color:'#c1447e'},
-  {id:'C', defaultName:'Team Vrindavan', color:'#49b788'},
-  {id:'D', defaultName:'Team Mathura',   color:'#5a8dee'},
-  {id:'E', defaultName:'Team Barsana',   color:'#e8734a'},
-  {id:'F', defaultName:'Team Dwarka',    color:'#9b6bd9'},
-  {id:'G', defaultName:'Team Vraj',      color:'#2fb4c7'},
-  {id:'H', defaultName:'Team Yamuna',    color:'#d9527a'},
-];
-const MIN_TEAMS = 2, MAX_TEAMS = 8, DEFAULT_TEAMS = 5;
+const COLOR_PALETTE = ['#f0b429','#c1447e','#49b788','#5a8dee','#e8734a','#9b6bd9','#2fb4c7','#d9527a'];
+const MAX_TEAMS = 8;
 const TOTAL_STEPS = 6;
 const STATE_KEY = 'dahihandi:state';
 const POLL_MS = 700;
+const QUESTION_TIME_DEFAULT = 45; // seconds
+const TIME_INCREMENT = 10; // seconds, host can add repeatedly
 
 const QUESTIONS = [
   {q:"What term describes a startup valued at over $1 billion?", options:["Decacorn","Unicorn","Centaur","Gazelle"], correct:1},
@@ -522,19 +516,9 @@ const QUESTIONS = [
   {q:"What is a group of startups working together in a shared support program called?", options:["Venture Network","Startup Cluster","Incubator / Accelerator Cohort","Business Consortium"], correct:2},
 ];
 
-/* ============================= STORAGE BACKEND =============================
-   This app needs a place to store live game state that every device (host +
-   all contestants) can read and write. Fill in FIREBASE_CONFIG below with
-   your own free Firebase Realtime Database project to get real cross-device
-   sync when this is hosted on GitHub Pages. See README.md for step-by-step
-   setup instructions.
-
-   If FIREBASE_CONFIG is left empty, the app falls back to localStorage,
-   which only syncs between tabs/windows on the SAME device/browser — handy
-   for local testing, but the host and contestants must be on separate
-   devices for a real game, so you'll want to set up Firebase for that. */
+/* ============================= STORAGE BACKEND ============================= */
 const FIREBASE_CONFIG = {
-  databaseURL: "https://dahi-handi-quiz-default-rtdb.firebaseio.com" 
+  databaseURL: "https://dahi-handi-quiz-default-rtdb.firebaseio.com"
 };
 const FIREBASE_OK = !!FIREBASE_CONFIG.databaseURL;
 const LOCALSTORAGE_OK = (function(){
@@ -550,7 +534,7 @@ function bannerHtml(){
   return `<div class="sync-warning">⚠️ No Firebase database configured, so this only syncs between tabs on this same device — the host and contestants won't see the same game from separate devices. Paste your databaseURL into FIREBASE_CONFIG near the top of the script.</div>`;
 }
 
-/* ============================= AUDIO (fully synthesized, no files needed) ============================= */
+/* ============================= AUDIO ============================= */
 let actx = null;
 function getCtx(){
   if(!actx){
@@ -591,6 +575,11 @@ function playReveal(){
   tone(ctx, 523.25, 0, 0.16, 'sine', 0.14);
   tone(ctx, 659.25, 0.12, 0.2, 'sine', 0.14);
 }
+function playChime(){
+  const ctx = getCtx(); if(!ctx) return;
+  tone(ctx, 660, 0, 0.14, 'triangle', 0.16);
+  tone(ctx, 990, 0.1, 0.22, 'triangle', 0.14);
+}
 function playMatkaSmash(){
   const ctx = getCtx(); if(!ctx) return;
   tone(ctx, 90, 0, 0.35, 'sine', 0.3);
@@ -621,68 +610,90 @@ function playFanfare(){
 
 /* ============================= STATE HELPERS ============================= */
 function defaultState(){
-  const steps = {}; const names = {};
-  TEAM_POOL.forEach(t=>{ steps[t.id]=0; names[t.id]=t.defaultName; });
   return {
-    names,
-    teamCount: DEFAULT_TEAMS,
+    teams: [],              // [{id,name,color}]
     lobbyOpen: false,
     roomCode: null,
     accessCode: 'JANMASHTAMI',
-    joinRequests: [], // {id, name, teamId, ts, status: pending|approved|denied|revoked}
+    joinRequests: [],       // {id, name, teamId, ts, status: pending|approved|denied|revoked}
     qIndex: -1,
     revealed: false,
-    buzzedTeam: null,
-    buzzedAt: null,
+    buzzQueue: [],           // [{teamId, ts}] — max 2 entries, in buzz order
+    currentTurn: 0,          // index into buzzQueue of whoever is currently answering
     selectedAnswer: null,
     revealedAnswer: false,
     wrongTeams: [],
-    steps,
+    steps: {},
     totalSteps: TOTAL_STEPS,
     winner: null,
     locked: false,
+    questionEndsAt: null,    // epoch ms
+    timeLimit: QUESTION_TIME_DEFAULT,
     updatedAt: Date.now()
   };
 }
-function activeTeams(state){
-  const n = Math.min(Math.max(state.teamCount||DEFAULT_TEAMS, MIN_TEAMS), MAX_TEAMS);
-  return TEAM_POOL.slice(0, n);
+function normalizeState(s){
+  if(!s) return defaultState();
+  if(!s.teams) s.teams = [];
+  if(s.lobbyOpen === undefined) s.lobbyOpen = false;
+  if(s.roomCode === undefined) s.roomCode = null;
+  if(!s.accessCode) s.accessCode = 'JANMASHTAMI';
+  if(!s.joinRequests) s.joinRequests = [];
+  if(!s.wrongTeams) s.wrongTeams = [];
+  if(!s.steps) s.steps = {};
+  if(!s.buzzQueue) s.buzzQueue = [];
+  if(s.currentTurn === undefined) s.currentTurn = 0;
+  if(s.selectedAnswer === undefined) s.selectedAnswer = null;
+  if(s.revealedAnswer === undefined) s.revealedAnswer = false;
+  if(s.winner === undefined) s.winner = null;
+  if(s.locked === undefined) s.locked = false;
+  if(s.qIndex === undefined) s.qIndex = -1;
+  if(s.revealed === undefined) s.revealed = false;
+  if(s.questionEndsAt === undefined) s.questionEndsAt = null;
+  if(!s.timeLimit) s.timeLimit = QUESTION_TIME_DEFAULT;
+  if(!s.totalSteps) s.totalSteps = TOTAL_STEPS;
+  return s;
+}
+function raceTeams(state){
+  const approvedIds = new Set(state.joinRequests.filter(r=>r.status==='approved').map(r=>r.teamId));
+  return state.teams.filter(t=>approvedIds.has(t.id));
+}
+function findTeamById(state, id){
+  return state.teams.find(t=>t.id===id) || null;
+}
+function currentAnswererId(state){
+  const entry = state.buzzQueue && state.buzzQueue[state.currentTurn];
+  return entry ? entry.teamId : null;
+}
+function isTimeExpired(state){
+  return state.qIndex>=0 && state.revealed && !state.locked && state.questionEndsAt && Date.now() >= state.questionEndsAt;
+}
+function findOrCreateTeam(state, typedName){
+  const clean = (typedName||'').trim().slice(0,24);
+  if(!clean) return {error:'empty'};
+  const existing = state.teams.find(t=>t.name.toLowerCase()===clean.toLowerCase());
+  if(existing) return {team: existing};
+  if(state.teams.length >= MAX_TEAMS) return {error:'cap'};
+  const team = {
+    id: 't' + Date.now().toString(36) + Math.random().toString(36).slice(2,6),
+    name: clean,
+    color: COLOR_PALETTE[state.teams.length % COLOR_PALETTE.length]
+  };
+  state.teams.push(team);
+  state.steps[team.id] = 0;
+  return {team};
 }
 function genRoomCode(){
   return String(Math.floor(1000 + Math.random()*9000));
 }
 
-/* In-tab memory fallback: used only if neither Firebase nor localStorage is
-   available (e.g. localStorage blocked by browser settings). Keeps the page
-   from crashing, but nothing will persist or sync anywhere. */
 const memoryStore = {};
 
 function firebaseUrl(){
   return FIREBASE_CONFIG.databaseURL.replace(/\/$/,'') + '/' + STATE_KEY.replace(/:/g,'_') + '.json';
 }
 function firebaseReadUrl(){
-  // Cache-bust: some mobile browsers (notably iOS Safari) silently reuse a
-  // cached response for repeated GETs to the same URL, which makes polling
-  // look "stuck" — the contestant never sees the host's updates. Appending
-  // a changing query param plus cache:'no-store' forces a fresh network hit.
   return firebaseUrl() + '?_=' + Date.now();
-}
-
-function normalizeState(s){
-  if(!s) return defaultState();
-  if(!s.teamCount) s.teamCount = DEFAULT_TEAMS;
-  if(s.lobbyOpen === undefined) s.lobbyOpen = false;
-  if(s.roomCode === undefined) s.roomCode = null;
-  if(!s.accessCode) s.accessCode = 'JANMASHTAMI';
-  if(!s.joinRequests) s.joinRequests = [];
-  if(!s.wrongTeams) s.wrongTeams = [];
-  if(!s.names) s.names = {};
-  if(!s.steps) s.steps = {};
-  if(s.selectedAnswer === undefined) s.selectedAnswer = null;
-  if(s.revealedAnswer === undefined) s.revealedAnswer = false;
-  if(s.buzzedTeam === undefined) s.buzzedTeam = null;
-  if(s.winner === undefined) s.winner = null;
-  return s;
 }
 
 let lastStorageError = null;
@@ -813,6 +824,42 @@ const app = document.getElementById('app');
   }, {passive:true});
 })();
 
+/* ============================= LIVE TIMER TICKER ============================= */
+/* One global fast interval keeps every .timer-big element on screen updated
+   smoothly, reading whatever state each page's own poll loop last cached —
+   this decouples the timer's smoothness from the (slower) network poll rate. */
+let liveStateCache = null;
+function formatTimeVal(sec){
+  sec = Math.max(0, Math.ceil(sec));
+  if(sec >= 60){
+    const m = Math.floor(sec/60), s = sec%60;
+    return m + ':' + String(s).padStart(2,'0');
+  }
+  return String(sec);
+}
+function updateTimerEl(el, state){
+  if(!el || !state) return;
+  const numEl = el.querySelector('.timer-num');
+  if(!numEl) return;
+  if(state.qIndex < 0 || !state.revealed || state.locked || !state.questionEndsAt){
+    numEl.textContent = '--';
+    el.classList.remove('urgent','expired');
+    return;
+  }
+  const remain = (state.questionEndsAt - Date.now())/1000;
+  const expired = remain <= 0;
+  numEl.textContent = expired ? '0' : formatTimeVal(remain);
+  el.classList.toggle('urgent', !expired && remain <= 10);
+  el.classList.toggle('expired', expired);
+}
+setInterval(()=>{
+  if(!liveStateCache) return;
+  document.querySelectorAll('.timer-big').forEach(el=>updateTimerEl(el, liveStateCache));
+}, 250);
+function timerHtml(id, label){
+  return `<div class="timer-big" id="${id}"><span class="timer-num">--</span><span class="timer-lbl">${label||'sec left'}</span></div>`;
+}
+
 /* ============================= SVG PIECES ============================= */
 function logoSvg(){
   return `<svg viewBox="0 0 60 60" fill="none">
@@ -851,13 +898,11 @@ function handiFragment(idSuffix){
       </linearGradient>
     </defs>
 
-    <!-- rim / neck -->
     <path d="M96 96 L92 76 Q130 60 168 76 L164 96Z" fill="url(#${gNeck})" stroke="#5c3a1a" stroke-width="2"/>
     <ellipse cx="130" cy="76" rx="38" ry="12" fill="#8a4b16" stroke="#5c3a1a" stroke-width="2"/>
     <ellipse cx="130" cy="76" rx="38" ry="12" fill="none" stroke="#f7d685" stroke-width="1.2" opacity="0.6"/>
     <ellipse cx="130" cy="96" rx="34" ry="8" fill="#6a380d"/>
 
-    <!-- rounded matka body, warm clay gradient for a real terracotta feel -->
     <path d="M96 92
              C58 118, 42 168, 54 208
              C66 250, 96 274, 130 274
@@ -865,11 +910,9 @@ function handiFragment(idSuffix){
              C218 168, 202 118, 164 92
              C150 82, 110 82, 96 92Z"
           fill="url(#${gBody})" stroke="#5c3410" stroke-width="2.5"/>
-    <!-- soft rim highlight for a glazed-clay sheen -->
     <path d="M104 98 C78 122, 64 160, 70 196" stroke="#f2c988" stroke-width="6" fill="none" opacity="0.35" stroke-linecap="round"/>
     <path d="M188 118 C198 148, 196 182, 180 214" stroke="#5c3410" stroke-width="8" fill="none" opacity="0.22" stroke-linecap="round"/>
 
-    <!-- decorative dotted belt -->
     <path d="M55 176 Q130 200 205 176" stroke="#5c3a1a" stroke-width="2" fill="none" opacity="0.8"/>
     <path d="M55 176 Q130 200 205 176" stroke="#f7d685" stroke-width="1" fill="none" opacity="0.5" stroke-dasharray="1 7"/>
     <g fill="#f7d685" opacity="0.9">
@@ -878,18 +921,15 @@ function handiFragment(idSuffix){
     </g>
     <path d="M64 140 Q130 158 196 140" stroke="#f7d685" stroke-width="1.2" fill="none" opacity="0.35"/>
 
-    <!-- a real mound of makhan (butter) heaped up and overflowing the neck -->
     <path d="M99 82 Q104 62 130 60 Q156 62 161 82
              Q168 88 160 96 Q150 84 130 84 Q110 84 100 96
              Q92 88 99 82Z" fill="url(#${gMound})" stroke="#e0c07f" stroke-width="1"/>
     <ellipse cx="118" cy="70" rx="9" ry="6" fill="#fffef9" opacity="0.85"/>
     <ellipse cx="142" cy="74" rx="7" ry="5" fill="#fffef9" opacity="0.7"/>
-    <!-- soft makhan drips sliding down the outside of the pot -->
     <path d="M104 92 Q98 112 104 130 Q108 142 100 148 Q94 136 96 118 Q98 104 104 92Z" fill="url(#${gDrip})"/>
     <path d="M154 92 Q162 108 156 124 Q152 134 160 140 Q166 126 162 110 Q159 100 154 92Z" fill="url(#${gDrip})"/>
     <path d="M126 88 Q122 108 128 126 Q131 136 124 142 Q118 128 121 110 Q123 98 126 88Z" fill="url(#${gDrip})" opacity="0.9"/>
 
-    <!-- side handles -->
     <path d="M96 108 Q78 100 68 112" stroke="#5c3a1a" stroke-width="4" fill="none" stroke-linecap="round"/>
     <path d="M164 108 Q182 100 192 112" stroke="#5c3a1a" stroke-width="4" fill="none" stroke-linecap="round"/>
   `;
@@ -899,7 +939,6 @@ function matkiHeroSvg(){
   return `<svg viewBox="0 0 260 300" xmlns="http://www.w3.org/2000/svg">
     <ellipse cx="130" cy="278" rx="78" ry="12" fill="#000" opacity="0.28"/>
 
-    <!-- peacock feather emerging from the opening, upper-left -->
     <g transform="translate(70,40) rotate(-18)">
       <path d="M0 90 Q-4 40 8 0" stroke="#3a7a4a" stroke-width="3" fill="none" stroke-linecap="round"/>
       <path d="M8 0 C-16 8 -26 34 -14 54 C4 44 16 20 8 0Z" fill="#2f9c5e"/>
@@ -909,7 +948,6 @@ function matkiHeroSvg(){
       <ellipse cx="8" cy="16" rx="2.6" ry="4" fill="#0a3733"/>
     </g>
 
-    <!-- bansuri emerging diagonally, upper-right -->
     <g transform="translate(150,26) rotate(24)">
       <rect x="0" y="0" width="118" height="12" rx="6" fill="#c9932f" stroke="#8a4b16" stroke-width="1.4"/>
       <rect x="0" y="0" width="118" height="4" rx="2" fill="#f0c96a" opacity="0.7"/>
@@ -1003,15 +1041,19 @@ function winnerFigureSvg(color){
 function renderRaceBoard(state, containerId){
   const el = document.getElementById(containerId);
   if(!el) return;
-  const teams = activeTeams(state);
+  const teams = raceTeams(state);
+  if(teams.length===0){
+    el.style.gridTemplateColumns = '1fr';
+    el.innerHTML = `<div class="empty-hint" style="text-align:center;padding:14px;">No approved teams yet.</div>`;
+    return;
+  }
   el.style.gridTemplateColumns = `repeat(${teams.length}, 1fr)`;
   el.innerHTML = teams.map(t=>{
     const steps = state.steps[t.id]||0;
     const isWinner = state.winner === t.id;
-    const name = state.names[t.id] || t.defaultName;
     return `<div class="pole-col">
       ${poleSvg(t, steps, state.totalSteps, isWinner)}
-      <div class="pole-name" style="color:${t.color}">${escapeHtml(name)}</div>
+      <div class="pole-name" style="color:${t.color}">${escapeHtml(t.name)}</div>
       <div class="pole-steps">${steps} / ${state.totalSteps}${isWinner?' 🏆':''}</div>
     </div>`;
   }).join('');
@@ -1082,8 +1124,8 @@ function clearWinFx(){
 let lastWinnerShown = null;
 function triggerWinSequence(state, playSound){
   clearWinFx();
-  const name = state.names[state.winner] || state.winner;
-  const team = TEAM_POOL.find(t=>t.id===state.winner);
+  const team = findTeamById(state, state.winner);
+  const name = team ? team.name : state.winner;
   const color = team ? team.color : '#f0b429';
 
   if(playSound) playMatkaSmash();
@@ -1127,7 +1169,7 @@ function maybeShowWin(state, playSound){
   }
 }
 
-/* ============================= LANDING (HOST / CONTESTANT CHOICE) ============================= */
+/* ============================= LANDING ============================= */
 function renderLanding(){
   app.innerHTML = `
     ${bannerHtml()}
@@ -1150,12 +1192,12 @@ function renderLanding(){
       <a class="role-card host" href="?role=display" style="border-color:rgba(90,141,238,0.28)">
         <div class="role-icon">📽️</div>
         <div class="role-title">Display</div>
-        <div class="role-sub">Second screen for the projector — big KBC-style question board and the live matka race, no controls.</div>
+        <div class="role-sub">Second screen for the projector — big KBC-style question board, the countdown timer, and the live matka race.</div>
       </a>
       <a class="role-card contestant" href="?role=contestant">
         <div class="role-icon">🙋</div>
         <div class="role-title">Contestant</div>
-        <div class="role-sub">Enter the room code from your host, pick your team, and wait for approval.</div>
+        <div class="role-sub">Enter the room code from your host, type your own team name, and wait for approval.</div>
       </a>
     </div>
     <div class="foot-note">Contestants just need a room code from the host. The host panel is password-protected so only the person running the quiz can control it — run Host on the control laptop and Display on the projector screen at the same time.</div>
@@ -1164,7 +1206,6 @@ function renderLanding(){
 
 /* ============================= CONTESTANT FLOW ============================= */
 let myRequestId = null;
-let mySelectedTeamId = null;
 let contestantPhase = 'join';
 let contestantPollHandle = null;
 
@@ -1177,64 +1218,57 @@ function contestantTopbar(sub){
 }
 
 function renderContestantJoinForm(state, errorMsg){
-  const teams = activeTeams(state);
   app.innerHTML = `
     ${bannerHtml()}
     ${contestantTopbar('Contestant Entry')}
     <div class="hero small">
       <div class="eyebrow">Contestant Entry</div>
       <h2>Join the <span>Race</span></h2>
-      <p>Enter the room code from your host, pick your team, and tell us your name — the host will confirm you before you can buzz in.</p>
+      <p>Enter the room code from your host, type your own team name, and tell us your name — the host will confirm you before you can buzz in.</p>
     </div>
     ${!state.lobbyOpen ? `<div class="notice">The lobby isn't open yet. Ask your host to open it, then refresh this page.</div>` : `
     <div class="panel">
       <h3>1 · Room code</h3>
       <input class="code-input" id="codeInput" maxlength="4" inputmode="numeric" autocomplete="off" placeholder="0000">
-      <h3 style="margin-top:20px;">2 · Pick your team</h3>
-      <div class="choice-grid" id="teamGrid"></div>
+      <h3 style="margin-top:20px;">2 · Your team name</h3>
+      <input class="name-input" id="teamNameInput" maxlength="24" autocomplete="off" placeholder="e.g. Team Falcons">
       <h3 style="margin-top:20px;">3 · Your name</h3>
       <input class="name-input" id="nameInput" maxlength="24" autocomplete="off" placeholder="e.g. Aditi Sharma">
       ${errorMsg ? `<div class="form-error">${escapeHtml(errorMsg)}</div>` : ''}
       <button class="btn gold" id="submitJoinBtn" style="margin-top:18px;" disabled>Request to Join</button>
+      <div class="hint-line">Teammates joining separately can type the exact same team name to land on the same pole.</div>
     </div>`}
   `;
   if(!state.lobbyOpen) return;
 
-  const grid = document.getElementById('teamGrid');
-  grid.innerHTML = teams.map(t=>`<div class="team-card" data-team="${t.id}" style="border-color:${t.color}33">
-      <div class="dot" style="background:${t.color}"></div>
-      <div class="lbl">${escapeHtml(state.names[t.id]||t.defaultName)}</div>
-    </div>`).join('');
-
   const codeInput = document.getElementById('codeInput');
+  const teamNameInput = document.getElementById('teamNameInput');
   const nameInput = document.getElementById('nameInput');
   const submitBtn = document.getElementById('submitJoinBtn');
 
   function checkReady(){
     const code = codeInput.value.trim();
+    const team = teamNameInput.value.trim();
     const name = nameInput.value.trim();
-    submitBtn.disabled = !(code.length===4 && mySelectedTeamId && name.length>0);
+    submitBtn.disabled = !(code.length===4 && team.length>0 && name.length>0);
   }
-  function refreshSelection(){
-    grid.querySelectorAll('.team-card').forEach(c=>c.classList.toggle('selected', c.dataset.team===mySelectedTeamId));
-    checkReady();
-  }
-  grid.querySelectorAll('.team-card').forEach(c=>{
-    c.addEventListener('click', ()=>{ mySelectedTeamId = c.dataset.team; refreshSelection(); });
-  });
   codeInput.addEventListener('input', checkReady);
+  teamNameInput.addEventListener('input', checkReady);
   nameInput.addEventListener('input', checkReady);
-  refreshSelection();
 
   submitBtn.addEventListener('click', async ()=>{
     getCtx();
     const code = codeInput.value.trim();
+    const teamNameVal = teamNameInput.value.trim();
     const name = nameInput.value.trim().slice(0,24);
     const fresh = await loadState();
     if(!fresh.lobbyOpen){ renderContestantJoinForm(fresh, 'The lobby just closed. Ask your host to reopen it.'); return; }
     if(fresh.roomCode !== code){ renderContestantJoinForm(fresh, "That room code doesn't match — check with your host."); return; }
+    const teamRes = findOrCreateTeam(fresh, teamNameVal);
+    if(teamRes.error === 'cap'){ renderContestantJoinForm(fresh, `Maximum of ${MAX_TEAMS} teams reached — ask your host to check existing team names.`); return; }
+    if(teamRes.error === 'empty'){ renderContestantJoinForm(fresh, 'Please enter a team name.'); return; }
     const id = 'r' + Date.now().toString(36) + Math.random().toString(36).slice(2,7);
-    fresh.joinRequests.push({id, name, teamId: mySelectedTeamId, ts: Date.now(), status:'pending'});
+    fresh.joinRequests.push({id, name, teamId: teamRes.team.id, ts: Date.now(), status:'pending'});
     await saveState(fresh);
     myRequestId = id;
     contestantPhase = 'pending';
@@ -1262,7 +1296,7 @@ function renderContestantPending(){
     state.joinRequests = state.joinRequests.filter(r=>r.id!==myRequestId);
     await saveState(state);
     stopContestantPolling();
-    myRequestId = null; mySelectedTeamId = null; contestantPhase = 'join';
+    myRequestId = null; contestantPhase = 'join';
     renderContestantJoinForm(state);
   });
 }
@@ -1284,7 +1318,7 @@ function renderContestantBlocked(kind){
   `;
   document.getElementById('retryBtn').addEventListener('click', async ()=>{
     stopContestantPolling();
-    myRequestId = null; mySelectedTeamId = null; contestantPhase = 'join';
+    myRequestId = null; contestantPhase = 'join';
     const state = await loadState();
     renderContestantJoinForm(state);
   });
@@ -1300,6 +1334,7 @@ function renderContestantGameShell(team){
       <div class="team-mini-name" id="teamName" style="color:${team.color}"></div>
       <div class="playing-as" id="playingAs"></div>
       <div class="status-pill" id="statusPill">Waiting for host…</div>
+      ${timerHtml('timerDisplay')}
       <div class="q-box waiting" id="qBox">
         <div class="qnum" id="qnum">QUESTION</div>
         <div class="qtext" id="qtext">Get ready — the host will show the next question here.</div>
@@ -1314,7 +1349,7 @@ function renderContestantGameShell(team){
 }
 
 async function contestantGameTick(team, state, displayName){
-  document.getElementById('teamName').textContent = state.names[team.id] || team.defaultName;
+  document.getElementById('teamName').textContent = team.name;
   document.getElementById('playingAs').textContent = `Playing as ${displayName}`;
   const btn = document.getElementById('buzzBtn');
   const pill = document.getElementById('statusPill');
@@ -1322,23 +1357,25 @@ async function contestantGameTick(team, state, displayName){
   const qtext = document.getElementById('qtext');
   const qnum = document.getElementById('qnum');
   const feedback = document.getElementById('feedback');
+  const optionsWrap = document.getElementById('optionsWrap');
 
   renderRaceBoard(state, 'miniBoard');
   maybeShowWin(state, false);
+  updateTimerEl(document.getElementById('timerDisplay'), state);
 
-  if(!activeTeams(state).some(t=>t.id===team.id)){
+  if(!raceTeams(state).some(t=>t.id===team.id)){
     pill.textContent = 'This team is not part of the current round';
     btn.disabled = true; btn.textContent = 'WAIT';
     return;
   }
 
   if(state.locked){
+    const winTeam = findTeamById(state, state.winner);
     pill.textContent = '🏆 Game over';
     qBox.classList.add('waiting');
-    qtext.textContent = `${state.names[state.winner]||state.winner} broke the matka!`;
+    qtext.textContent = `${winTeam ? winTeam.name : state.winner} broke the matka!`;
     btn.disabled = true; btn.textContent = 'FINISHED';
-    const optWrap = document.getElementById('optionsWrap');
-    if(optWrap) optWrap.innerHTML = '';
+    if(optionsWrap) optionsWrap.innerHTML = '';
     return;
   }
 
@@ -1349,8 +1386,7 @@ async function contestantGameTick(team, state, displayName){
     qtext.textContent = 'Get ready — the host will show the next question here.';
     btn.disabled = true; btn.textContent = 'WAIT';
     feedback.textContent = '';
-    const optWrap = document.getElementById('optionsWrap');
-    if(optWrap) optWrap.innerHTML = '';
+    if(optionsWrap) optionsWrap.innerHTML = '';
     return;
   }
 
@@ -1359,44 +1395,53 @@ async function contestantGameTick(team, state, displayName){
   qnum.textContent = `QUESTION ${(state.qIndex % QUESTIONS.length) + 1}`;
   qtext.textContent = q.q;
 
+  const expired = isTimeExpired(state);
+  const cur = currentAnswererId(state);
   const iAmOut = state.wrongTeams.includes(team.id);
-  const iBuzzed = state.buzzedTeam === team.id;
-  const optionsWrap = document.getElementById('optionsWrap');
+  const iAmQueued = state.buzzQueue.some(b=>b.teamId===team.id);
+  const iAmCurrent = cur === team.id;
 
-  if(state.buzzedTeam){
-    if(iBuzzed){
-      const canPick = state.selectedAnswer===null && !state.revealedAnswer;
-      pill.textContent = canPick ? '🎙️ You buzzed first! Tap your answer.' : (state.revealedAnswer ? 'Answer revealed' : 'Answer locked in — waiting for host');
-      btn.disabled = true; btn.textContent = 'BUZZED!';
-      feedback.textContent = canPick ? 'Choose one option below.' : '';
-      renderKbcOptions(optionsWrap, q, {
-        selected: state.selectedAnswer, revealed: state.revealedAnswer, interactive: canPick,
-        onSelect: (idx)=> doSelectAnswer(team, idx)
-      });
-    } else {
-      const bname = state.names[state.buzzedTeam] || state.buzzedTeam;
-      pill.textContent = state.revealedAnswer ? 'Answer revealed' : `${bname} buzzed first`;
-      btn.disabled = true; btn.textContent = 'LOCKED';
-      feedback.textContent = '';
-      renderKbcOptions(optionsWrap, q, {selected: state.selectedAnswer, revealed: state.revealedAnswer, interactive:false});
-    }
+  if(expired){
+    pill.textContent = "⏱ Time's up for this question";
+    btn.disabled = true; btn.textContent = 'TIME UP';
+    feedback.textContent = '';
+    renderKbcOptions(optionsWrap, q, {selected: state.selectedAnswer, revealed: state.revealedAnswer, interactive:false});
+  } else if(iAmCurrent){
+    const canPick = state.selectedAnswer===null;
+    pill.textContent = canPick ? '🎙️ Your turn! Tap your answer.' : (state.revealedAnswer ? 'Answer revealed' : 'Answer locked in — waiting for host');
+    btn.disabled = true; btn.textContent = 'YOUR TURN';
+    feedback.textContent = canPick ? 'Choose one option below.' : '';
+    renderKbcOptions(optionsWrap, q, {
+      selected: state.selectedAnswer, revealed: state.revealedAnswer, interactive: canPick,
+      onSelect: (idx)=> doSelectAnswer(team, idx)
+    });
+  } else if(iAmQueued){
+    pill.textContent = '🔔 You buzzed — waiting for your turn';
+    btn.disabled = true; btn.textContent = 'QUEUED';
+    feedback.textContent = '';
+    renderKbcOptions(optionsWrap, q, {selected: state.selectedAnswer, revealed: state.revealedAnswer, interactive:false});
   } else if(iAmOut){
-    pill.textContent = 'You answered this one — waiting for next question';
+    pill.textContent = 'You already answered this one — waiting for next question';
     btn.disabled = true; btn.textContent = 'WAIT';
     feedback.textContent = '';
-    renderKbcOptions(optionsWrap, q, {interactive:false});
-  } else {
+    renderKbcOptions(optionsWrap, q, {selected: state.selectedAnswer, revealed: state.revealedAnswer, interactive:false});
+  } else if(state.buzzQueue.length < 2){
     pill.textContent = 'Buzzer is live!';
     btn.disabled = false; btn.textContent = 'BUZZ';
     feedback.textContent = '';
     renderKbcOptions(optionsWrap, q, {interactive:false});
+  } else {
+    pill.textContent = 'Two teams already buzzed — you missed this round';
+    btn.disabled = true; btn.textContent = 'MISSED';
+    feedback.textContent = '';
+    renderKbcOptions(optionsWrap, q, {selected: state.selectedAnswer, revealed: state.revealedAnswer, interactive:false});
   }
 }
 
 async function doSelectAnswer(team, idx){
   playBuzzClick();
   const state = await loadState();
-  if(state.locked || state.buzzedTeam !== team.id || state.selectedAnswer !== null || state.revealedAnswer) return;
+  if(state.locked || isTimeExpired(state) || currentAnswererId(state) !== team.id || state.selectedAnswer !== null) return;
   state.selectedAnswer = idx;
   await saveState(state);
 }
@@ -1404,9 +1449,11 @@ async function doSelectAnswer(team, idx){
 async function doBuzz(team){
   playBuzzClick();
   const state = await loadState();
-  if(state.locked || state.qIndex<0 || !state.revealed || state.buzzedTeam || state.wrongTeams.includes(team.id)) return;
-  state.buzzedTeam = team.id;
-  state.buzzedAt = Date.now();
+  if(state.locked || state.qIndex<0 || !state.revealed || isTimeExpired(state)) return;
+  if(state.buzzQueue.length >= 2) return;
+  if(state.buzzQueue.some(b=>b.teamId===team.id)) return;
+  if(state.wrongTeams.includes(team.id)) return;
+  state.buzzQueue.push({teamId: team.id, ts: Date.now()});
   const result = await saveState(state);
   if(result.__saveFailed){
     const feedback = document.getElementById('feedback');
@@ -1422,6 +1469,7 @@ function startContestantPolling(){
   stopContestantPolling();
   const loop = async ()=>{
     const state = await loadState();
+    liveStateCache = state;
     if(!myRequestId) return;
     const req = state.joinRequests.find(r=>r.id===myRequestId);
     if(!req){
@@ -1444,7 +1492,8 @@ function startContestantPolling(){
       return;
     }
     if(req.status === 'approved'){
-      const team = TEAM_POOL.find(t=>t.id===req.teamId);
+      const team = findTeamById(state, req.teamId);
+      if(!team) return;
       if(contestantPhase !== 'game'){ contestantPhase = 'game'; renderContestantGameShell(team); }
       await contestantGameTick(team, state, req.name);
       return;
@@ -1457,18 +1506,13 @@ function startContestantPolling(){
 function initContestantPage(){
   (async ()=>{
     const state = await loadState();
+    liveStateCache = state;
     renderContestantJoinForm(state);
   })();
 }
 
 /* ============================= HOST PAGE ============================= */
-function teamCountOptions(current){
-  let out = '';
-  for(let i=MIN_TEAMS;i<=MAX_TEAMS;i++){
-    out += `<option value="${i}" ${i===current?'selected':''}>${i} teams</option>`;
-  }
-  return out;
-}
+let hostCheckOn = false; // local-only "peek" toggle — never saved to shared state
 
 function renderHostShell(state){
   app.innerHTML = `
@@ -1483,8 +1527,6 @@ function renderHostShell(state){
     <div class="panel">
       <h3>1 · Lobby setup</h3>
       <div class="row">
-        <label style="font-family:'JetBrains Mono',monospace;font-size:12.5px;opacity:.75;">NUMBER OF TEAMS</label>
-        <select class="teamcount" id="teamCountSelect">${teamCountOptions(state.teamCount)}</select>
         <button class="btn gold" id="lobbyToggleBtn">${state.lobbyOpen ? 'Close Lobby' : 'Open Lobby'}</button>
         ${state.lobbyOpen ? `<button class="btn ghost" id="newCodeBtn">New Code</button>` : ''}
       </div>
@@ -1492,7 +1534,7 @@ function renderHostShell(state){
       <div class="room-code-box">
         <div class="room-code-label">ROOM CODE — share verbally with contestants only</div>
         <div class="room-code-display" id="roomCodeVal">${state.roomCode||'----'}</div>
-      </div>` : `<div class="notice" style="margin-top:14px;">Lobby is closed. Open it so contestants can submit join requests.</div>`}
+      </div>` : `<div class="notice" style="margin-top:14px;">Lobby is closed. Open it so contestants can submit join requests. Teams are created automatically from whatever names contestants type.</div>`}
       <div class="row" style="margin-top:16px;">
         <label style="font-family:'JetBrains Mono',monospace;font-size:12.5px;opacity:.75;">HOST PASSWORD</label>
         <input type="text" id="accessCodeInput" value="${escapeHtml(state.accessCode)}" maxlength="30"
@@ -1511,13 +1553,16 @@ function renderHostShell(state){
       <div id="approvedList"></div>
     </div>
 
+    ${timerHtml('timerDisplay')}
     <div class="q-box waiting" id="qBox" style="max-width:100%;">
       <div class="qnum" id="qnum">QUESTION</div>
       <div class="qtext" id="qtext">Press "Show Next Question" to begin.</div>
     </div>
     <div id="hostOptionsWrap"></div>
+    <div id="checkResultWrap"></div>
 
     <div class="buzz-banner empty" id="buzzBanner">No buzz yet</div>
+    <div class="queue-list" id="queueList"></div>
 
     <div class="race-board" id="board" style="margin-top:20px;"></div>
 
@@ -1525,10 +1570,16 @@ function renderHostShell(state){
       <h3>Round control</h3>
       <div class="row">
         <button class="btn gold" id="nextBtn">Show Next Question →</button>
-        <button class="btn ghost" id="revealBtn" disabled>🔍 Reveal Answer (KBC suspense)</button>
+        <button class="btn sky" id="addTimeBtn">⏱ +10 sec</button>
+      </div>
+      <div class="row" style="margin-top:10px;">
+        <button class="btn ghost" id="checkBtn">👁 Check Answer (host only)</button>
+        <button class="btn ghost" id="revealBtn">📣 Reveal Answer (everyone)</button>
+      </div>
+      <div class="row" style="margin-top:10px;">
         <button class="btn green" id="correctBtn" disabled>✓ Correct — climb!</button>
-        <button class="btn red" id="wrongBtn" disabled>✗ Wrong</button>
-        <button class="btn ghost" id="resetBuzzBtn">Reset buzzer</button>
+        <button class="btn red" id="wrongBtn" disabled>✗ Wrong — next in queue</button>
+        <button class="btn ghost" id="resetBuzzBtn">Reset buzz queue</button>
       </div>
       <div class="row" style="margin-top:10px;">
         <button class="btn ghost" id="resetGameBtn">Reset whole game</button>
@@ -1542,58 +1593,6 @@ function renderHostShell(state){
   `;
 }
 
-async function hostTick(state){
-  renderRaceBoard(state, 'board');
-  maybeShowWin(state, false);
-  renderRequestLists(state);
-
-  const qBox = document.getElementById('qBox');
-  const qnum = document.getElementById('qnum');
-  const qtext = document.getElementById('qtext');
-  const banner = document.getElementById('buzzBanner');
-  const correctBtn = document.getElementById('correctBtn');
-  const wrongBtn = document.getElementById('wrongBtn');
-  const revealBtn = document.getElementById('revealBtn');
-  const optionsWrap = document.getElementById('hostOptionsWrap');
-
-  let q = null;
-  if(state.qIndex < 0){
-    qBox.classList.add('waiting');
-    qnum.textContent = 'QUESTION';
-    qtext.textContent = 'Press "Show Next Question" to begin.';
-    optionsWrap.innerHTML = '';
-  } else {
-    q = QUESTIONS[state.qIndex % QUESTIONS.length];
-    qBox.classList.remove('waiting');
-    qnum.textContent = `QUESTION ${(state.qIndex % QUESTIONS.length)+1} of ${QUESTIONS.length}`;
-    qtext.textContent = q.q;
-    renderKbcOptions(optionsWrap, q, {selected: state.selectedAnswer, revealed: state.revealedAnswer, interactive:false});
-  }
-
-  if(state.buzzedTeam){
-    const t = TEAM_POOL.find(x=>x.id===state.buzzedTeam);
-    const name = state.names[state.buzzedTeam] || t.defaultName;
-    banner.className = 'buzz-banner hit';
-    banner.style.background = t.color+'26';
-    banner.style.borderColor = t.color;
-    banner.style.color = t.color;
-    const pickText = state.selectedAnswer===null ? 'choosing an answer…' : `picked option ${String.fromCharCode(65+state.selectedAnswer)}`;
-    banner.textContent = `🔔 ${name} buzzed first — ${pickText}`;
-    correctBtn.disabled = state.locked;
-    wrongBtn.disabled = state.locked;
-    revealBtn.disabled = state.locked || state.selectedAnswer===null || state.revealedAnswer;
-  } else {
-    banner.className = 'buzz-banner empty';
-    banner.style.background=''; banner.style.borderColor=''; banner.style.color='';
-    banner.textContent = state.revealed ? 'Waiting for a team to buzz…' : 'No question live';
-    correctBtn.disabled = true;
-    wrongBtn.disabled = true;
-    revealBtn.disabled = true;
-  }
-
-  document.getElementById('nextBtn').disabled = state.locked;
-}
-
 function renderRequestLists(state){
   const pendingEl = document.getElementById('pendingList');
   const approvedEl = document.getElementById('approvedList');
@@ -1603,18 +1602,18 @@ function renderRequestLists(state){
   const approved = state.joinRequests.filter(r=>r.status==='approved');
 
   pendingEl.innerHTML = pending.length ? pending.map(r=>{
-    const t = TEAM_POOL.find(x=>x.id===r.teamId);
+    const t = findTeamById(state, r.teamId);
     return `<div class="request-row">
-      <div class="who"><div class="n">${escapeHtml(r.name)}</div><div class="t" style="color:${t?t.color:'#ccc'}">${escapeHtml(state.names[r.teamId]||(t?t.defaultName:'Unknown team'))}</div></div>
+      <div class="who"><div class="n">${escapeHtml(r.name)}</div><div class="t" style="color:${t?t.color:'#ccc'}">${escapeHtml(t?t.name:'Unknown team')}</div></div>
       <button class="btn-sm green" data-approve="${r.id}">Approve</button>
       <button class="btn-sm red" data-deny="${r.id}">Deny</button>
     </div>`;
   }).join('') : `<div class="empty-hint">No pending requests right now.</div>`;
 
   approvedEl.innerHTML = approved.length ? approved.map(r=>{
-    const t = TEAM_POOL.find(x=>x.id===r.teamId);
+    const t = findTeamById(state, r.teamId);
     return `<div class="request-row">
-      <div class="who"><div class="n">${escapeHtml(r.name)}</div><div class="t" style="color:${t?t.color:'#ccc'}">${escapeHtml(state.names[r.teamId]||(t?t.defaultName:'Unknown team'))}</div></div>
+      <div class="who"><div class="n">${escapeHtml(r.name)}</div><div class="t" style="color:${t?t.color:'#ccc'}">${escapeHtml(t?t.name:'Unknown team')}</div></div>
       <button class="btn-sm ghost" data-revoke="${r.id}">Revoke</button>
     </div>`;
   }).join('') : `<div class="empty-hint">No one has been approved yet.</div>`;
@@ -1640,14 +1639,6 @@ async function hostRevokeRequest(id){
   if(req){ req.status = 'revoked'; await saveState(state); }
 }
 
-async function hostChangeTeamCount(newCount){
-  const state = await loadState();
-  state.teamCount = newCount;
-  state.buzzedTeam = null;
-  state.buzzedAt = null;
-  state.wrongTeams = [];
-  await saveState(state);
-}
 async function hostToggleLobby(){
   const state = await loadState();
   state.lobbyOpen = !state.lobbyOpen;
@@ -1667,42 +1658,56 @@ async function hostNextQuestion(){
   if(state.locked) return;
   state.qIndex += 1;
   state.revealed = true;
-  state.buzzedTeam = null;
-  state.buzzedAt = null;
+  state.buzzQueue = [];
+  state.currentTurn = 0;
   state.selectedAnswer = null;
   state.revealedAnswer = false;
   state.wrongTeams = [];
+  state.timeLimit = QUESTION_TIME_DEFAULT;
+  state.questionEndsAt = Date.now() + QUESTION_TIME_DEFAULT*1000;
+  hostCheckOn = false;
   await saveState(state);
   playReveal();
 }
-async function hostRevealAnswer(){
+async function hostAddTime(){
+  const state = await loadState();
+  if(state.locked || state.qIndex<0 || !state.revealed) return;
+  state.questionEndsAt = (state.questionEndsAt || Date.now()) + TIME_INCREMENT*1000;
+  state.timeLimit += TIME_INCREMENT;
+  await saveState(state);
+}
+async function hostRevealToAll(){
   getCtx();
   const state = await loadState();
-  if(state.locked || !state.buzzedTeam || state.selectedAnswer===null || state.revealedAnswer) return;
+  if(state.locked || state.qIndex<0 || !state.revealed || state.revealedAnswer) return;
   state.revealedAnswer = true;
   await saveState(state);
   const q = QUESTIONS[state.qIndex % QUESTIONS.length];
-  if(state.selectedAnswer === q.correct){ playFanfare(); } else { playBell(); }
+  if(state.selectedAnswer===null){ playChime(); }
+  else if(state.selectedAnswer === q.correct){ playFanfare(); }
+  else { playBell(); }
 }
 async function hostMarkCorrect(){
   const state = await loadState();
-  if(!state.buzzedTeam || state.locked) return;
-  const id = state.buzzedTeam;
-  state.steps[id] = Math.min((state.steps[id]||0)+1, state.totalSteps);
-  const wonNow = state.steps[id] >= state.totalSteps;
+  const cur = currentAnswererId(state);
+  if(!cur || state.locked) return;
+  state.steps[cur] = Math.min((state.steps[cur]||0)+1, state.totalSteps);
+  const wonNow = state.steps[cur] >= state.totalSteps;
   if(wonNow){
-    state.winner = id;
+    state.winner = cur;
     state.locked = true;
   }
   state.revealed = false;
-  state.buzzedTeam = null;
-  state.buzzedAt = null;
+  state.buzzQueue = [];
+  state.currentTurn = 0;
   state.selectedAnswer = null;
   state.revealedAnswer = false;
   state.wrongTeams = [];
+  state.questionEndsAt = null;
+  hostCheckOn = false;
   await saveState(state);
   if(wonNow){
-    lastWinnerShown = id;
+    lastWinnerShown = cur;
     triggerWinSequence(state, true);
   } else {
     playBell();
@@ -1710,20 +1715,22 @@ async function hostMarkCorrect(){
 }
 async function hostMarkWrong(){
   const state = await loadState();
-  if(!state.buzzedTeam || state.locked) return;
-  state.wrongTeams.push(state.buzzedTeam);
-  state.buzzedTeam = null;
-  state.buzzedAt = null;
+  const cur = currentAnswererId(state);
+  if(!cur || state.locked) return;
+  state.wrongTeams.push(cur);
+  state.currentTurn += 1;
   state.selectedAnswer = null;
   state.revealedAnswer = false;
+  hostCheckOn = false;
   await saveState(state);
 }
 async function hostResetBuzz(){
   const state = await loadState();
-  state.buzzedTeam = null;
-  state.buzzedAt = null;
+  state.buzzQueue = [];
+  state.currentTurn = 0;
   state.selectedAnswer = null;
   state.revealedAnswer = false;
+  hostCheckOn = false;
   await saveState(state);
 }
 async function hostSetAccessCode(code){
@@ -1732,15 +1739,16 @@ async function hostSetAccessCode(code){
   await saveState(state);
 }
 async function hostResetGame(){
-  if(!confirm('Reset round progress? Team names, the lobby, room code, access password, and join requests will be kept.')) return;
+  if(!confirm('Reset round progress? Teams, the lobby, room code, access password, and join requests will be kept.')) return;
   const state = await loadState();
   const fresh = defaultState();
-  fresh.names = state.names;
-  fresh.teamCount = state.teamCount;
+  fresh.teams = state.teams;
   fresh.lobbyOpen = state.lobbyOpen;
   fresh.roomCode = state.roomCode;
   fresh.accessCode = state.accessCode;
   fresh.joinRequests = state.joinRequests;
+  fresh.teams.forEach(t=>{ fresh.steps[t.id] = 0; });
+  hostCheckOn = false;
   await saveState(fresh);
   lastWinnerShown = null;
   clearWinFx();
@@ -1748,19 +1756,115 @@ async function hostResetGame(){
 
 function renderTeamEdit(state){
   const el = document.getElementById('teamEdit');
-  el.innerHTML = activeTeams(state).map(t=>`
+  if(!el) return;
+  if(state.teams.length===0){
+    el.innerHTML = `<div class="empty-hint">No teams created yet — they appear automatically once contestants submit a join request.</div>`;
+    return;
+  }
+  el.innerHTML = state.teams.map(t=>`
     <div class="team-edit-row">
       <div class="swatch" style="background:${t.color}"></div>
-      <input type="text" data-team="${t.id}" value="${escapeHtml(state.names[t.id]||t.defaultName)}" maxlength="24">
+      <input type="text" data-team="${t.id}" value="${escapeHtml(t.name)}" maxlength="24">
     </div>
   `).join('');
   el.querySelectorAll('input').forEach(inp=>{
     inp.addEventListener('change', async ()=>{
       const s = await loadState();
-      s.names[inp.dataset.team] = inp.value.trim() || TEAM_POOL.find(t=>t.id===inp.dataset.team).defaultName;
+      const team = findTeamById(s, inp.dataset.team);
+      if(team) team.name = inp.value.trim() || team.name;
       await saveState(s);
     });
   });
+}
+
+async function hostTick(state){
+  liveStateCache = state;
+  renderRaceBoard(state, 'board');
+  maybeShowWin(state, false);
+  renderRequestLists(state);
+  updateTimerEl(document.getElementById('timerDisplay'), state);
+
+  const qBox = document.getElementById('qBox');
+  const qnum = document.getElementById('qnum');
+  const qtext = document.getElementById('qtext');
+  const banner = document.getElementById('buzzBanner');
+  const queueList = document.getElementById('queueList');
+  const correctBtn = document.getElementById('correctBtn');
+  const wrongBtn = document.getElementById('wrongBtn');
+  const revealBtn = document.getElementById('revealBtn');
+  const checkBtn = document.getElementById('checkBtn');
+  const addTimeBtn = document.getElementById('addTimeBtn');
+  const optionsWrap = document.getElementById('hostOptionsWrap');
+  const checkResultWrap = document.getElementById('checkResultWrap');
+
+  let q = null;
+  if(state.qIndex < 0){
+    qBox.classList.add('waiting');
+    qnum.textContent = 'QUESTION';
+    qtext.textContent = 'Press "Show Next Question" to begin.';
+    optionsWrap.innerHTML = '';
+  } else {
+    q = QUESTIONS[state.qIndex % QUESTIONS.length];
+    qBox.classList.remove('waiting');
+    qnum.textContent = `QUESTION ${(state.qIndex % QUESTIONS.length)+1} of ${QUESTIONS.length}`;
+    qtext.textContent = q.q;
+    const peekRevealed = state.revealedAnswer || (hostCheckOn && state.selectedAnswer!==null);
+    renderKbcOptions(optionsWrap, q, {selected: state.selectedAnswer, revealed: peekRevealed, interactive:false});
+  }
+
+  const cur = currentAnswererId(state);
+  const expired = isTimeExpired(state);
+
+  if(cur){
+    const t = findTeamById(state, cur);
+    const name = t ? t.name : cur;
+    banner.className = 'buzz-banner hit';
+    banner.style.background = (t?t.color:'#f0b429')+'26';
+    banner.style.borderColor = t?t.color:'#f0b429';
+    banner.style.color = t?t.color:'#f0b429';
+    const pickText = state.selectedAnswer===null ? 'choosing an answer…' : `picked option ${String.fromCharCode(65+state.selectedAnswer)}`;
+    banner.textContent = `🔔 ${name}'s turn — ${pickText}`;
+    correctBtn.disabled = state.locked;
+    wrongBtn.disabled = state.locked;
+  } else {
+    banner.className = 'buzz-banner empty';
+    banner.style.background=''; banner.style.borderColor=''; banner.style.color='';
+    banner.textContent = expired ? "⏱ Time's up — no one left to answer" : (state.revealed ? 'Waiting for a team to buzz…' : 'No question live');
+    correctBtn.disabled = true;
+    wrongBtn.disabled = true;
+  }
+
+  if(queueList){
+    if(state.buzzQueue.length===0){
+      queueList.innerHTML = '';
+    } else {
+      queueList.innerHTML = state.buzzQueue.map((b,i)=>{
+        const t = findTeamById(state, b.teamId);
+        const name = t ? t.name : b.teamId;
+        const isCur = i===state.currentTurn;
+        const isDone = i<state.currentTurn;
+        let cls = 'queue-chip';
+        if(isCur) cls += ' current';
+        else if(isDone) cls += ' done-wrong';
+        return `<div class="${cls}">${i+1}. ${escapeHtml(name)}${isCur?' (answering)':isDone?' (wrong)':''}</div>`;
+      }).join('');
+    }
+  }
+
+  if(checkResultWrap){
+    if(hostCheckOn && cur && state.selectedAnswer!==null && q){
+      const isCorrect = state.selectedAnswer === q.correct;
+      checkResultWrap.innerHTML = `<div class="check-result ${isCorrect?'correct':'wrong'}">${isCorrect?'✓ Correct answer selected':'✗ Incorrect answer selected'} (host-only view)</div>`;
+    } else {
+      checkResultWrap.innerHTML = '';
+    }
+  }
+
+  if(checkBtn) checkBtn.disabled = !(cur && state.selectedAnswer!==null);
+  if(checkBtn) checkBtn.textContent = hostCheckOn ? '🙈 Hide Check' : '👁 Check Answer (host only)';
+  if(revealBtn) revealBtn.disabled = state.locked || state.qIndex<0 || !state.revealed || state.revealedAnswer;
+  if(addTimeBtn) addTimeBtn.disabled = state.locked || state.qIndex<0 || !state.revealed;
+  document.getElementById('nextBtn').disabled = state.locked;
 }
 
 function renderHostPassword(errorMsg){
@@ -1801,10 +1905,6 @@ function initHostPage(state0){
   wireHostButtons();
 
   function wireHostButtons(){
-    document.getElementById('teamCountSelect').addEventListener('change', (e)=>{
-      getCtx();
-      hostChangeTeamCount(parseInt(e.target.value,10));
-    });
     document.getElementById('lobbyToggleBtn').addEventListener('click', async ()=>{
       getCtx();
       const state = await hostToggleLobby();
@@ -1823,7 +1923,9 @@ function initHostPage(state0){
       renderTeamEdit(state);
     });
     document.getElementById('nextBtn').addEventListener('click', hostNextQuestion);
-    document.getElementById('revealBtn').addEventListener('click', hostRevealAnswer);
+    document.getElementById('addTimeBtn').addEventListener('click', hostAddTime);
+    document.getElementById('checkBtn').addEventListener('click', ()=>{ hostCheckOn = !hostCheckOn; });
+    document.getElementById('revealBtn').addEventListener('click', hostRevealToAll);
     document.getElementById('correctBtn').addEventListener('click', ()=>{ getCtx(); hostMarkCorrect(); });
     document.getElementById('wrongBtn').addEventListener('click', hostMarkWrong);
     document.getElementById('resetBuzzBtn').addEventListener('click', hostResetBuzz);
@@ -1837,9 +1939,10 @@ function initHostPage(state0){
     const state = await loadState();
     await hostTick(state);
     if(!namesInit){ renderTeamEdit(state); namesInit = true; }
-    const sel = document.getElementById('teamCountSelect');
-    if(sel && document.activeElement !== sel){
-      sel.value = state.teamCount;
+    else {
+      const activeEl = document.activeElement;
+      const isEditingName = activeEl && activeEl.tagName==='INPUT' && activeEl.dataset && activeEl.dataset.team;
+      if(!isEditingName) renderTeamEdit(state);
     }
   };
   loop();
@@ -1857,6 +1960,7 @@ function renderDisplayShell(){
     <div class="feather-divider"></div>
     <div class="wrap display-wrap" style="padding:0;">
       <div class="display-title" id="displayTitle">Waiting for the host to start…</div>
+      ${timerHtml('timerDisplay')}
       <div class="display-kbc" id="displayKbc"></div>
       <div class="display-race">
         <div id="displayBoard" class="race-board"></div>
@@ -1869,14 +1973,17 @@ let displayLastQIndex = -2;
 let displayLastRevealed = false;
 
 async function displayTick(state){
+  liveStateCache = state;
   const title = document.getElementById('displayTitle');
   const kbcWrap = document.getElementById('displayKbc');
 
   renderRaceBoard(state, 'displayBoard');
   maybeShowWin(state, true);
+  updateTimerEl(document.getElementById('timerDisplay'), state);
 
   if(state.locked){
-    title.textContent = `🏆 ${state.names[state.winner]||state.winner} broke the matka!`;
+    const winTeam = findTeamById(state, state.winner);
+    title.textContent = `🏆 ${winTeam ? winTeam.name : state.winner} broke the matka!`;
     kbcWrap.innerHTML = '';
     displayLastQIndex = state.qIndex; displayLastRevealed = false;
     return;
@@ -1898,22 +2005,25 @@ async function displayTick(state){
   }
   if(state.revealedAnswer && !displayLastRevealed){
     displayLastRevealed = true;
-    if(state.selectedAnswer === q.correct) playFanfare(); else playBell();
+    if(state.selectedAnswer===null) playChime();
+    else if(state.selectedAnswer === q.correct) playFanfare(); else playBell();
   }
   if(!state.revealedAnswer) displayLastRevealed = false;
 
-  title.textContent = `Question ${(state.qIndex % QUESTIONS.length)+1} of ${QUESTIONS.length}`;
-  const suspense = !!state.buzzedTeam && state.selectedAnswer===null;
+  const expired = isTimeExpired(state);
+  title.textContent = expired ? `Question ${(state.qIndex % QUESTIONS.length)+1} — Time's up!` : `Question ${(state.qIndex % QUESTIONS.length)+1} of ${QUESTIONS.length}`;
+  const cur = currentAnswererId(state);
+  const suspense = !!cur && state.selectedAnswer===null && !state.revealedAnswer;
   renderKbcOptions(kbcWrap, q, {selected: state.selectedAnswer, revealed: state.revealedAnswer, interactive:false, suspense});
 
-  if(state.buzzedTeam){
-    const t = TEAM_POOL.find(x=>x.id===state.buzzedTeam);
-    const name = state.names[state.buzzedTeam] || t.defaultName;
+  if(cur){
+    const t = findTeamById(state, cur);
+    const name = t ? t.name : cur;
     const buzzNote = document.createElement('div');
     buzzNote.className = 'display-waiting';
-    buzzNote.style.color = t.color;
+    buzzNote.style.color = t?t.color:'var(--gold)';
     buzzNote.style.opacity = '0.9';
-    buzzNote.textContent = `🔔 ${name} buzzed in`;
+    buzzNote.textContent = `🔔 ${name}'s turn to answer`;
     kbcWrap.appendChild(buzzNote);
   }
 }
