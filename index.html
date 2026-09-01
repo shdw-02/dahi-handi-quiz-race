@@ -744,11 +744,9 @@ function currentAnswererId(state){
 function isTimeExpired(state){
   return state.qIndex>=0 && state.revealed && !state.locked && !state.timerPaused && state.questionEndsAt && Date.now() >= state.questionEndsAt;
 }
-function findOrCreateTeam(state, typedName){
+function createContestant(state, typedName){
   const clean = (typedName||'').trim().slice(0,24);
   if(!clean) return {error:'empty'};
-  const existing = state.teams.find(t=>t.name.toLowerCase()===clean.toLowerCase());
-  if(existing) return {team: existing};
   const cap = state.maxTeams || MAX_TEAMS;
   if(state.teams.length >= cap) return {error:'cap'};
   const team = {
@@ -818,12 +816,10 @@ function roomCurrentAnswererId(state){
   const entry = r.buzzQueue && r.buzzQueue[r.currentTurn];
   return entry ? entry.teamId : null;
 }
-function roomFindOrCreateTeam(state, typedName){
+function createRoomContestant(state, typedName){
   const r = state.room;
   const clean = (typedName||'').trim().slice(0,24);
   if(!clean) return {error:'empty'};
-  const existing = r.teams.find(t=>t.name.toLowerCase()===clean.toLowerCase());
-  if(existing) return {team: existing};
   if(r.teams.length >= ROOM_MAX_TEAMS) return {error:'cap'};
   const team = {
     id: 'rt' + Date.now().toString(36) + Math.random().toString(36).slice(2,6),
@@ -1205,7 +1201,7 @@ function renderRaceBoard(state, containerId){
   const teams = raceTeams(state);
   if(teams.length===0){
     el.style.gridTemplateColumns = '1fr';
-    el.innerHTML = `<div class="empty-hint" style="text-align:center;padding:14px;">No approved teams yet.</div>`;
+    el.innerHTML = `<div class="empty-hint" style="text-align:center;padding:14px;">No approved contestants yet.</div>`;
     return;
   }
   el.style.gridTemplateColumns = `repeat(${teams.length}, 1fr)`;
@@ -1349,13 +1345,13 @@ function renderLanding(){
       <div class="eyebrow">Janmashtami Finale</div>
       <h2>Dahi Handi <span>Quiz Race</span></h2>
       <div class="matki-hero"><div class="matki-glow"></div>${matkiHeroSvg()}</div>
-      <p>Buzz in first, pick the right answer from four options, and climb the pole one step at a time. First team to break the makhan-filled matka wins the finale.</p>
+      <p>Buzz in first, pick the right answer from four options, and climb the pole one step at a time. First contestant to break the makhan-filled matka wins the finale.</p>
     </div>
     <div class="role-grid">
       <a class="role-card host" href="?role=host">
         <div class="role-icon">🖥️</div>
         <div class="role-title">Host</div>
-        <div class="role-sub">Run the quiz: manage teams, approve contestants, ask questions, and judge buzzes. Password-protected.</div>
+        <div class="role-sub">Run the quiz: approve contestants, ask questions, and judge buzzes. Password-protected.</div>
       </a>
       <a class="role-card host" href="?role=display" style="border-color:rgba(90,141,238,0.28)">
         <div class="role-icon">📽️</div>
@@ -1420,49 +1416,42 @@ function renderContestantJoinForm(state, errorMsg){
     <div class="hero small">
       <div class="eyebrow">Contestant Entry</div>
       <h2>Join the <span>Race</span></h2>
-      <p>Enter the room code from your host, type your own team name, and tell us your name — the host will confirm you before you can buzz in.</p>
+      <p>Enter the room code from your host and tell us your name — the host will confirm you before you can buzz in.</p>
     </div>
     ${!state.lobbyOpen ? `<div class="notice">The lobby isn't open yet. Ask your host to open it, then refresh this page.</div>` : `
     <div class="panel">
       <h3>1 · Room code</h3>
       <input class="code-input" id="codeInput" maxlength="4" inputmode="numeric" autocomplete="off" placeholder="0000">
-      <h3 style="margin-top:20px;">2 · Your team name</h3>
-      <input class="name-input" id="teamNameInput" maxlength="24" autocomplete="off" placeholder="e.g. Team Falcons">
-      <h3 style="margin-top:20px;">3 · Your name</h3>
+      <h3 style="margin-top:20px;">2 · Your name</h3>
       <input class="name-input" id="nameInput" maxlength="24" autocomplete="off" placeholder="e.g. Aditi Sharma">
       ${errorMsg ? `<div class="form-error">${escapeHtml(errorMsg)}</div>` : ''}
       <button class="btn gold" id="submitJoinBtn" style="margin-top:18px;" disabled>Request to Join</button>
-      <div class="hint-line">Teammates joining separately can type the exact same team name to land on the same pole.</div>
     </div>`}
   `;
   if(!state.lobbyOpen) return;
 
   const codeInput = document.getElementById('codeInput');
-  const teamNameInput = document.getElementById('teamNameInput');
   const nameInput = document.getElementById('nameInput');
   const submitBtn = document.getElementById('submitJoinBtn');
 
   function checkReady(){
     const code = codeInput.value.trim();
-    const team = teamNameInput.value.trim();
     const name = nameInput.value.trim();
-    submitBtn.disabled = !(code.length===4 && team.length>0 && name.length>0);
+    submitBtn.disabled = !(code.length===4 && name.length>0);
   }
   codeInput.addEventListener('input', checkReady);
-  teamNameInput.addEventListener('input', checkReady);
   nameInput.addEventListener('input', checkReady);
 
   submitBtn.addEventListener('click', async ()=>{
     getCtx();
     const code = codeInput.value.trim();
-    const teamNameVal = teamNameInput.value.trim();
     const name = nameInput.value.trim().slice(0,24);
     const fresh = await loadState();
     if(!fresh.lobbyOpen){ renderContestantJoinForm(fresh, 'The lobby just closed. Ask your host to reopen it.'); return; }
     if(fresh.roomCode !== code){ renderContestantJoinForm(fresh, "That room code doesn't match — check with your host."); return; }
-    const teamRes = findOrCreateTeam(fresh, teamNameVal);
-    if(teamRes.error === 'cap'){ renderContestantJoinForm(fresh, `Maximum of ${fresh.maxTeams||MAX_TEAMS} teams reached — ask your host to check existing team names.`); return; }
-    if(teamRes.error === 'empty'){ renderContestantJoinForm(fresh, 'Please enter a team name.'); return; }
+    const teamRes = createContestant(fresh, name);
+    if(teamRes.error === 'cap'){ renderContestantJoinForm(fresh, `Maximum of ${fresh.maxTeams||MAX_TEAMS} contestants reached — ask your host to raise the limit.`); return; }
+    if(teamRes.error === 'empty'){ renderContestantJoinForm(fresh, 'Please enter your name.'); return; }
     const id = 'r' + Date.now().toString(36) + Math.random().toString(36).slice(2,7);
     fresh.joinRequests.push({id, name, teamId: teamRes.team.id, ts: Date.now(), status:'pending'});
     await saveState(fresh);
@@ -1528,7 +1517,6 @@ function renderContestantGameShell(team){
     </div>
     <div class="team-page">
       <div class="team-mini-name" id="teamName" style="color:${team.color}"></div>
-      <div class="playing-as" id="playingAs"></div>
       <div class="status-pill" id="statusPill">Waiting for host…</div>
       ${timerHtml('timerDisplay')}
       <div class="q-box waiting" id="qBox">
@@ -1546,7 +1534,6 @@ function renderContestantGameShell(team){
 
 async function contestantGameTick(team, state, displayName){
   document.getElementById('teamName').textContent = team.name;
-  document.getElementById('playingAs').textContent = `Playing as ${displayName}`;
   const btn = document.getElementById('buzzBtn');
   const pill = document.getElementById('statusPill');
   const qBox = document.getElementById('qBox');
@@ -1560,7 +1547,7 @@ async function contestantGameTick(team, state, displayName){
   updateTimerEl(document.getElementById('timerDisplay'), state);
 
   if(!raceTeams(state).some(t=>t.id===team.id)){
-    pill.textContent = 'This team is not part of the current round';
+    pill.textContent = "You're not part of the current round";
     btn.disabled = true; btn.textContent = 'WAIT';
     return;
   }
@@ -1640,7 +1627,7 @@ async function contestantGameTick(team, state, displayName){
     feedback.textContent = '';
     renderKbcOptions(optionsWrap, q, {interactive:false});
   } else {
-    pill.textContent = 'Two teams already buzzed — you missed this round';
+    pill.textContent = 'Two contestants already buzzed — you missed this round';
     btn.disabled = true; btn.textContent = 'MISSED';
     feedback.textContent = '';
     renderKbcOptions(optionsWrap, q, {selected: state.selectedAnswer, revealed: state.revealedAnswer, interactive:false});
@@ -1740,49 +1727,42 @@ function renderRoomJoinForm(state, errorMsg){
     <div class="hero small">
       <div class="eyebrow">Buzzer Room</div>
       <h2>Join the <span>Room</span></h2>
-      <p>Enter the room passkey from your host, your team name, and your own name. No approval needed — you're in as soon as you submit.</p>
+      <p>Enter the room passkey from your host and your own name. No approval needed — you're in as soon as you submit.</p>
     </div>
     ${!configured ? `<div class="notice">The buzzer room hasn't been set up yet. Ask your host to configure the rounds, then refresh this page.</div>` : `
     <div class="panel">
       <h3>1 · Room passkey</h3>
       <input class="code-input" id="roomCodeInput" maxlength="4" inputmode="numeric" autocomplete="off" placeholder="0000">
-      <h3 style="margin-top:20px;">2 · Your team name</h3>
-      <input class="name-input" id="roomTeamNameInput" maxlength="24" autocomplete="off" placeholder="e.g. Team Falcons">
-      <h3 style="margin-top:20px;">3 · Your name</h3>
+      <h3 style="margin-top:20px;">2 · Your name</h3>
       <input class="name-input" id="roomNameInput" maxlength="24" autocomplete="off" placeholder="e.g. Aditi Sharma">
       ${errorMsg ? `<div class="form-error">${escapeHtml(errorMsg)}</div>` : ''}
       <button class="btn gold" id="roomSubmitBtn" style="margin-top:18px;" disabled>Join Room</button>
-      <div class="hint-line">Teammates joining separately can type the exact same team name to share the same score.</div>
     </div>`}
   `;
   if(!configured) return;
 
   const codeInput = document.getElementById('roomCodeInput');
-  const teamNameInput = document.getElementById('roomTeamNameInput');
   const nameInput = document.getElementById('roomNameInput');
   const submitBtn = document.getElementById('roomSubmitBtn');
 
   function checkReady(){
     const code = codeInput.value.trim();
-    const team = teamNameInput.value.trim();
     const name = nameInput.value.trim();
-    submitBtn.disabled = !(code.length===4 && team.length>0 && name.length>0);
+    submitBtn.disabled = !(code.length===4 && name.length>0);
   }
   codeInput.addEventListener('input', checkReady);
-  teamNameInput.addEventListener('input', checkReady);
   nameInput.addEventListener('input', checkReady);
 
   submitBtn.addEventListener('click', async ()=>{
     getCtx();
     const code = codeInput.value.trim();
-    const teamNameVal = teamNameInput.value.trim();
     const name = nameInput.value.trim().slice(0,24);
     const fresh = await loadState();
     if(!fresh.room.configured){ renderRoomJoinForm(fresh, 'The room just closed. Ask your host to reconfigure it.'); return; }
     if(fresh.room.passkey !== code){ renderRoomJoinForm(fresh, "That passkey doesn't match — check with your host."); return; }
-    const teamRes = roomFindOrCreateTeam(fresh, teamNameVal);
-    if(teamRes.error === 'cap'){ renderRoomJoinForm(fresh, `Maximum of ${ROOM_MAX_TEAMS} teams reached — ask your host to check existing team names.`); return; }
-    if(teamRes.error === 'empty'){ renderRoomJoinForm(fresh, 'Please enter a team name.'); return; }
+    const teamRes = createRoomContestant(fresh, name);
+    if(teamRes.error === 'cap'){ renderRoomJoinForm(fresh, `Maximum of ${ROOM_MAX_TEAMS} contestants reached — ask your host to raise the limit.`); return; }
+    if(teamRes.error === 'empty'){ renderRoomJoinForm(fresh, 'Please enter your name.'); return; }
     await saveState(fresh);
     myRoomTeamId = teamRes.team.id;
     myRoomDisplayName = name;
@@ -1799,7 +1779,6 @@ function renderRoomGameShell(team){
     </div>
     <div class="team-page">
       <div class="team-mini-name" id="roomTeamName" style="color:${team.color}"></div>
-      <div class="playing-as" id="roomPlayingAs"></div>
       <div class="status-pill" id="roomStatusPill">Waiting for host…</div>
       <div class="q-box waiting" id="roomQBox">
         <div class="qnum" id="roomQRound">ROUND</div>
@@ -1834,7 +1813,6 @@ let roomLastEventTs = 0;
 async function roomGameTick(team, state, displayName){
   const r = state.room;
   document.getElementById('roomTeamName').textContent = team.name;
-  document.getElementById('roomPlayingAs').textContent = `Playing as ${displayName}`;
   const pill = document.getElementById('roomStatusPill');
   const qBox = document.getElementById('roomQBox');
   const qRound = document.getElementById('roomQRound');
@@ -1971,7 +1949,7 @@ function renderHostShell(state){
       <div class="room-code-box">
         <div class="room-code-label">ROOM CODE — share verbally with contestants only</div>
         <div class="room-code-display" id="roomCodeVal">${state.roomCode||'----'}</div>
-      </div>` : `<div class="notice" style="margin-top:14px;">Lobby is closed. Open it so contestants can submit join requests. Teams are created automatically from whatever names contestants type.</div>`}
+      </div>` : `<div class="notice" style="margin-top:14px;">Lobby is closed. Open it so contestants can submit join requests. Contestants are created automatically from whatever name they type.</div>`}
       <div class="row" style="margin-top:16px;">
         <label style="font-family:'JetBrains Mono',monospace;font-size:12.5px;opacity:.75;">HOST PASSWORD</label>
         <input type="text" id="accessCodeInput" value="${escapeHtml(state.accessCode)}" maxlength="30"
@@ -1979,7 +1957,7 @@ function renderHostShell(state){
           border:1px solid rgba(255,255,255,0.18);border-radius:9px;padding:9px 10px;font-size:14px;min-width:180px;">
       </div>
       <div class="row" style="margin-top:16px;">
-        <label style="font-family:'JetBrains Mono',monospace;font-size:12.5px;opacity:.75;">MAX CONTESTANT TEAMS</label>
+        <label style="font-family:'JetBrains Mono',monospace;font-size:12.5px;opacity:.75;">MAX CONTESTANTS</label>
         <input type="number" id="maxTeamsInput" value="${state.maxTeams||MAX_TEAMS}" min="1" max="12"
           style="font-family:'JetBrains Mono',monospace;background:rgba(255,255,255,0.08);color:var(--gold-soft);
           border:1px solid rgba(255,255,255,0.18);border-radius:9px;padding:9px 10px;font-size:14px;width:80px;">
@@ -2040,7 +2018,7 @@ function renderHostShell(state){
     </div>
 
     <div class="panel">
-      <h3>Team names</h3>
+      <h3>Contestant names</h3>
       <div id="teamEdit"></div>
     </div>
     </div>
@@ -2060,7 +2038,7 @@ function renderRequestLists(state){
   pendingEl.innerHTML = pending.length ? pending.map(r=>{
     const t = findTeamById(state, r.teamId);
     return `<div class="request-row">
-      <div class="who"><div class="n">${escapeHtml(r.name)}</div><div class="t" style="color:${t?t.color:'#ccc'}">${escapeHtml(t?t.name:'Unknown team')}</div></div>
+      <div class="who"><div class="n" style="color:${t?t.color:'#ccc'}">${escapeHtml(r.name)}</div></div>
       <button class="btn-sm green" data-approve="${r.id}">Approve</button>
       <button class="btn-sm red" data-deny="${r.id}">Deny</button>
     </div>`;
@@ -2069,7 +2047,7 @@ function renderRequestLists(state){
   approvedEl.innerHTML = approved.length ? approved.map(r=>{
     const t = findTeamById(state, r.teamId);
     return `<div class="request-row">
-      <div class="who"><div class="n">${escapeHtml(r.name)}</div><div class="t" style="color:${t?t.color:'#ccc'}">${escapeHtml(t?t.name:'Unknown team')}</div></div>
+      <div class="who"><div class="n" style="color:${t?t.color:'#ccc'}">${escapeHtml(r.name)}</div></div>
       <button class="btn-sm ghost" data-revoke="${r.id}">Revoke</button>
     </div>`;
   }).join('') : `<div class="empty-hint">No one has been approved yet.</div>`;
@@ -2228,18 +2206,15 @@ async function hostSetWinnersNeeded(val){
   await saveState(state);
 }
 async function hostResetGame(){
-  if(!confirm('Reset round progress? Teams, the lobby, room code, access password, contestant/winner settings, and join requests will be kept.')) return;
+  if(!confirm('Reset the whole game? This clears every contestant and join request, and starts the race over. The lobby, room code, host password, and your max-contestants/winners settings are kept.')) return;
   const state = await loadState();
   const fresh = defaultState();
-  fresh.teams = state.teams;
   fresh.lobbyOpen = state.lobbyOpen;
   fresh.roomCode = state.roomCode;
   fresh.accessCode = state.accessCode;
-  fresh.joinRequests = state.joinRequests;
   fresh.maxTeams = state.maxTeams;
   fresh.winnersNeeded = state.winnersNeeded;
   fresh.room = state.room;
-  fresh.teams.forEach(t=>{ fresh.steps[t.id] = 0; });
   hostCheckOn = false;
   await saveState(fresh);
   lastWinnersShownCount = 0;
@@ -2335,18 +2310,19 @@ async function hostRoomFinalize(){
   playFanfare();
 }
 async function hostRoomResetProgress(){
-  if(!confirm('Reset the buzzer room progress? Round setup and teams are kept, scores go back to 0.')) return;
+  if(!confirm('Reset the buzzer room? Round setup (names, question counts, points) is kept, but every contestant and score is cleared.')) return;
   const state = await loadState();
   const r = state.room;
   r.roundIndex = -1; r.qIndex = -1;
   r.buzzQueue = []; r.currentTurn = 0; r.wrongTeams = [];
   r.questionOpen = false; r.answeredCorrect = false; r.currentPoints = 0;
   r.lastEvent = null; r.finished = false; r.leaderboard = null;
-  r.teams.forEach(t=>{ r.scores[t.id] = 0; });
+  r.teams = [];
+  r.scores = {};
   await saveState(state);
 }
 async function hostRoomNewSetup(){
-  if(!confirm('Start a brand new buzzer room? This clears the current rounds, teams and scores.')) return;
+  if(!confirm('Start a brand new buzzer room? This clears the current rounds, contestants and scores.')) return;
   const state = await loadState();
   state.room = defaultRoomState();
   await saveState(state);
@@ -2357,7 +2333,7 @@ function renderTeamEdit(state){
   const el = document.getElementById('teamEdit');
   if(!el) return;
   if(state.teams.length===0){
-    el.innerHTML = `<div class="empty-hint">No teams created yet — they appear automatically once contestants submit a join request.</div>`;
+    el.innerHTML = `<div class="empty-hint">No contestants yet — they appear automatically once someone submits a join request.</div>`;
     return;
   }
   el.innerHTML = state.teams.map(t=>`
@@ -2504,7 +2480,7 @@ function renderRoomDashboard(state){
     <div class="panel">
       <h3>Room management</h3>
       <div class="row">
-        <button class="btn ghost" id="roomResetProgressBtn">Reset progress (keep rounds &amp; teams)</button>
+        <button class="btn ghost" id="roomResetProgressBtn">Reset progress (clear contestants)</button>
         <button class="btn ghost" id="roomNewSetupBtn">Start a brand new room</button>
       </div>
     </div>
