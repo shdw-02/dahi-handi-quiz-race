@@ -511,7 +511,7 @@ const COLOR_PALETTE = ['#f0b429','#c1447e','#49b788','#5a8dee','#e8734a','#9b6bd
 const MAX_TEAMS = 8;
 const TOTAL_STEPS = 6;
 const STATE_KEY = 'dahihandi:state';
-const POLL_MS = 700;
+const POLL_MS = 900;
 const QUESTION_TIME_DEFAULT = 45; // seconds
 const TIME_INCREMENT = 10; // seconds, host can add repeatedly
 
@@ -1239,66 +1239,6 @@ function contestantTopbar(sub){
     <div class="feather-divider"></div>`;
 }
 
-function renderContestantJoinForm(state, errorMsg){
-  app.innerHTML = `
-    ${bannerHtml()}
-    ${contestantTopbar('Contestant Entry')}
-    <div class="hero small">
-      <div class="eyebrow">Contestant Entry</div>
-      <h2>Join the <span>Race</span></h2>
-      <p>Enter the room code from your host, type your own team name, and tell us your name — the host will confirm you before you can buzz in.</p>
-    </div>
-    ${!state.lobbyOpen ? `<div class="notice">The lobby isn't open yet. Ask your host to open it, then refresh this page.</div>` : `
-    <div class="panel">
-      <h3>1 · Room code</h3>
-      <input class="code-input" id="codeInput" maxlength="4" inputmode="numeric" autocomplete="off" placeholder="0000">
-      <h3 style="margin-top:20px;">2 · Your team name</h3>
-      <input class="name-input" id="teamNameInput" maxlength="24" autocomplete="off" placeholder="e.g. Team Falcons">
-      <h3 style="margin-top:20px;">3 · Your name</h3>
-      <input class="name-input" id="nameInput" maxlength="24" autocomplete="off" placeholder="e.g. Aditi Sharma">
-      ${errorMsg ? `<div class="form-error">${escapeHtml(errorMsg)}</div>` : ''}
-      <button class="btn gold" id="submitJoinBtn" style="margin-top:18px;" disabled>Request to Join</button>
-      <div class="hint-line">Teammates joining separately can type the exact same team name to land on the same pole.</div>
-    </div>`}
-  `;
-  if(!state.lobbyOpen) return;
-
-  const codeInput = document.getElementById('codeInput');
-  const teamNameInput = document.getElementById('teamNameInput');
-  const nameInput = document.getElementById('nameInput');
-  const submitBtn = document.getElementById('submitJoinBtn');
-
-  function checkReady(){
-    const code = codeInput.value.trim();
-    const team = teamNameInput.value.trim();
-    const name = nameInput.value.trim();
-    submitBtn.disabled = !(code.length===4 && team.length>0 && name.length>0);
-  }
-  codeInput.addEventListener('input', checkReady);
-  teamNameInput.addEventListener('input', checkReady);
-  nameInput.addEventListener('input', checkReady);
-
-  submitBtn.addEventListener('click', async ()=>{
-    getCtx();
-    const code = codeInput.value.trim();
-    const teamNameVal = teamNameInput.value.trim();
-    const name = nameInput.value.trim().slice(0,24);
-    const fresh = await loadState();
-    if(!fresh.lobbyOpen){ renderContestantJoinForm(fresh, 'The lobby just closed. Ask your host to reopen it.'); return; }
-    if(fresh.roomCode !== code){ renderContestantJoinForm(fresh, "That room code doesn't match — check with your host."); return; }
-    const teamRes = findOrCreateTeam(fresh, teamNameVal);
-    if(teamRes.error === 'cap'){ renderContestantJoinForm(fresh, `Maximum of ${MAX_TEAMS} teams reached — ask your host to check existing team names.`); return; }
-    if(teamRes.error === 'empty'){ renderContestantJoinForm(fresh, 'Please enter a team name.'); return; }
-    const id = 'r' + Date.now().toString(36) + Math.random().toString(36).slice(2,7);
-    fresh.joinRequests.push({id, name, teamId: teamRes.team.id, ts: Date.now(), status:'pending'});
-    await saveState(fresh);
-    myRequestId = id;
-    contestantPhase = 'pending';
-    renderContestantPending();
-    startContestantPolling();
-  });
-}
-
 function renderContestantPending(){
   app.innerHTML = `
     ${bannerHtml()}
@@ -1525,95 +1465,8 @@ function startContestantPolling(){
   contestantPollHandle = setInterval(loop, POLL_MS);
 }
 
-function initContestantPage(){
-  (async ()=>{
-    const state = await loadState();
-    liveStateCache = state;
-    renderContestantJoinForm(state);
-  })();
-}
-
 /* ============================= HOST PAGE ============================= */
 let hostCheckOn = false; // local-only "peek" toggle — never saved to shared state
-
-function renderHostShell(state){
-  app.innerHTML = `
-    ${bannerHtml()}
-    <div class="topbar">
-      <div class="brand">${logoSvg()}<div class="brand-text"><div class="name">I&amp;E CELL</div><div class="tag">Dahi Handi Quiz Race — Host</div></div></div>
-      <a href="?role=display" target="_blank" class="btn ghost" style="text-decoration:none;">📽️ Open Projector Display ↗</a>
-      <a href="?" class="btn ghost" style="text-decoration:none;">← Home</a>
-    </div>
-    <div class="feather-divider"></div>
-
-    <div class="panel">
-      <h3>1 · Lobby setup</h3>
-      <div class="row">
-        <button class="btn gold" id="lobbyToggleBtn">${state.lobbyOpen ? 'Close Lobby' : 'Open Lobby'}</button>
-        ${state.lobbyOpen ? `<button class="btn ghost" id="newCodeBtn">New Code</button>` : ''}
-      </div>
-      ${state.lobbyOpen ? `
-      <div class="room-code-box">
-        <div class="room-code-label">ROOM CODE — share verbally with contestants only</div>
-        <div class="room-code-display" id="roomCodeVal">${state.roomCode||'----'}</div>
-      </div>` : `<div class="notice" style="margin-top:14px;">Lobby is closed. Open it so contestants can submit join requests. Teams are created automatically from whatever names contestants type.</div>`}
-      <div class="row" style="margin-top:16px;">
-        <label style="font-family:'JetBrains Mono',monospace;font-size:12.5px;opacity:.75;">HOST PASSWORD</label>
-        <input type="text" id="accessCodeInput" value="${escapeHtml(state.accessCode)}" maxlength="30"
-          style="font-family:'JetBrains Mono',monospace;background:rgba(255,255,255,0.08);color:var(--gold-soft);
-          border:1px solid rgba(255,255,255,0.18);border-radius:9px;padding:9px 10px;font-size:14px;min-width:180px;">
-      </div>
-    </div>
-
-    <div class="panel">
-      <h3>2 · Join requests</h3>
-      <div id="pendingList"></div>
-    </div>
-
-    <div class="panel">
-      <h3>Approved contestants</h3>
-      <div id="approvedList"></div>
-    </div>
-
-    ${timerHtml('timerDisplay')}
-    <div class="q-box waiting" id="qBox" style="max-width:100%;">
-      <div class="qnum" id="qnum">QUESTION</div>
-      <div class="qtext" id="qtext">Press "Show Next Question" to begin.</div>
-    </div>
-    <div id="hostOptionsWrap"></div>
-    <div id="checkResultWrap"></div>
-
-    <div class="buzz-banner empty" id="buzzBanner">No buzz yet</div>
-    <div class="queue-list" id="queueList"></div>
-
-    <div class="race-board" id="board" style="margin-top:20px;"></div>
-
-    <div class="panel">
-      <h3>Round control</h3>
-      <div class="row">
-        <button class="btn gold" id="nextBtn">Show Next Question →</button>
-        <button class="btn sky" id="addTimeBtn">⏱ +10 sec</button>
-      </div>
-      <div class="row" style="margin-top:10px;">
-        <button class="btn ghost" id="checkBtn">👁 Check Answer (host only)</button>
-        <button class="btn ghost" id="revealBtn">📣 Reveal Answer (everyone)</button>
-      </div>
-      <div class="row" style="margin-top:10px;">
-        <button class="btn green" id="correctBtn" disabled>✓ Correct — climb!</button>
-        <button class="btn red" id="wrongBtn" disabled>✗ Wrong — next in queue</button>
-        <button class="btn ghost" id="resetBuzzBtn">Reset buzz queue</button>
-      </div>
-      <div class="row" style="margin-top:10px;">
-        <button class="btn ghost" id="resetGameBtn">Reset whole game</button>
-      </div>
-    </div>
-
-    <div class="panel">
-      <h3>Team names</h3>
-      <div id="teamEdit"></div>
-    </div>
-  `;
-}
 
 function renderRequestLists(state){
   const pendingEl = document.getElementById('pendingList');
@@ -1922,55 +1775,6 @@ function renderHostPassword(errorMsg){
   input.focus();
 }
 
-function initHostPage(state0){
-  renderHostShell(state0);
-  wireHostButtons();
-
-  function wireHostButtons(){
-    document.getElementById('lobbyToggleBtn').addEventListener('click', async ()=>{
-      getCtx();
-      const state = await hostToggleLobby();
-      renderHostShell(state);
-      wireHostButtons();
-      await hostTick(state);
-      renderTeamEdit(state);
-    });
-    const newCodeBtn = document.getElementById('newCodeBtn');
-    if(newCodeBtn) newCodeBtn.addEventListener('click', async ()=>{
-      await hostNewCode();
-      const state = await loadState();
-      renderHostShell(state);
-      wireHostButtons();
-      await hostTick(state);
-      renderTeamEdit(state);
-    });
-    document.getElementById('nextBtn').addEventListener('click', hostNextQuestion);
-    document.getElementById('addTimeBtn').addEventListener('click', hostAddTime);
-    document.getElementById('checkBtn').addEventListener('click', ()=>{ hostCheckOn = !hostCheckOn; });
-    document.getElementById('revealBtn').addEventListener('click', hostRevealToAll);
-    document.getElementById('correctBtn').addEventListener('click', ()=>{ getCtx(); hostMarkCorrect(); });
-    document.getElementById('wrongBtn').addEventListener('click', hostMarkWrong);
-    document.getElementById('resetBuzzBtn').addEventListener('click', hostResetBuzz);
-    document.getElementById('resetGameBtn').addEventListener('click', hostResetGame);
-    const accessInput = document.getElementById('accessCodeInput');
-    if(accessInput) accessInput.addEventListener('change', ()=> hostSetAccessCode(accessInput.value));
-  }
-
-  let namesInit = false;
-  const loop = async()=>{
-    const state = await loadState();
-    await hostTick(state);
-    if(!namesInit){ renderTeamEdit(state); namesInit = true; }
-    else {
-      const activeEl = document.activeElement;
-      const isEditingName = activeEl && activeEl.tagName==='INPUT' && activeEl.dataset && activeEl.dataset.team;
-      if(!isEditingName) renderTeamEdit(state);
-    }
-  };
-  loop();
-  setInterval(loop, POLL_MS);
-}
-
 /* ============================= DISPLAY (PROJECTOR) PAGE ============================= */
 function renderDisplayShell(){
   app.innerHTML = `
@@ -2167,9 +1971,13 @@ function renderRoomSetupPanel(state){
       <div class="hint-line">Questions are taken in order from the existing question bank. Total questions cannot exceed ${QUESTIONS.length}.</div>
       <div class="row" style="margin-top:14px;">
         <button class="btn gold" id="saveRoomSetupBtn">Save Room Setup</button>
-        ${state.roomOpen ? `<button class="btn ghost" id="newRoomCodeBtn">New Passkey</button>` : ''}
+        <button class="btn ghost" id="newRoomCodeBtn">New Passkey</button>
       </div>
-      ${state.roomOpen ? `<div class="room-code-box"><div class="room-code-label">ROOM PASSKEY — no approval required</div><div class="room-code-display">${escapeHtml(state.roomPasskey||'----')}</div></div>` : ''}
+      <div class="room-code-box">
+        <div class="room-code-label">ROOM PASSKEY — no approval required</div>
+        <div class="room-code-display">${escapeHtml(state.roomPasskey||'----')}</div>
+        <div class="hint-line">${state.roomOpen ? 'Room is open. Contestants can enter with this passkey.' : 'Save the room setup to activate this passkey.'}</div>
+      </div>
     </div>`;
 }
 
@@ -2403,7 +2211,14 @@ async function hostRoomTick(state){
 function wireNewHostButtons(){
   const byId=id=>document.getElementById(id);
   byId('hostLobbyTab')?.addEventListener('click',()=>{hostTab='lobby'; renderHostShell(lastHostState); wireNewHostButtons();});
-  byId('hostRoomTab')?.addEventListener('click',()=>{hostTab='room'; renderHostShell(lastHostState); wireNewHostButtons();});
+  byId('hostRoomTab')?.addEventListener('click',async()=>{
+    hostTab='room';
+    const state=ensureRoomState(await loadState());
+    if(!state.roomPasskey){ state.roomPasskey=genRoomCode(); await saveState(state); }
+    lastHostState=state;
+    renderHostShell(state);
+    wireNewHostButtons();
+  });
   byId('lobbyToggleBtn')?.addEventListener('click',async()=>{await hostToggleLobby(); lastHostState=await loadState(); renderHostShell(lastHostState); wireNewHostButtons();});
   byId('newCodeBtn')?.addEventListener('click',async()=>{await hostNewCode(); lastHostState=await loadState(); renderHostShell(lastHostState); wireNewHostButtons();});
   byId('accessCodeInput')?.addEventListener('change',e=>hostSetAccessCode(e.target.value));
@@ -2449,8 +2264,9 @@ function initHostPage(state0){
       if(!document.activeElement?.dataset?.team) renderTeamEdit(state);
     } else {
       hostRoomTick(state);
-      const activeRound=document.querySelector('.round-setup-card');
-      if(!activeRound) renderHostShell(state),wireNewHostButtons();
+      // Keep the setup form untouched while the host is editing it.
+      // Only render the full room shell if it has not been mounted yet.
+      if(!document.getElementById('roomParticipantsHost')) { renderHostShell(state); wireNewHostButtons(); }
     }
   };
   loop(); setInterval(loop,POLL_MS);
