@@ -314,6 +314,8 @@
   .timer-big .timer-lbl{font-size:13px;opacity:.6;letter-spacing:.08em;text-transform:uppercase;}
   .timer-big.urgent .timer-num{color:var(--danger);animation:timerPulse .6s ease-in-out infinite;}
   .timer-big.expired .timer-num{color:var(--danger);}
+  .timer-big.paused .timer-num{color:var(--sky);}
+  .timer-big.paused .timer-lbl::after{content:' (paused)';}
   @keyframes timerPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.14);}}
   .display-wrap .timer-big .timer-num{font-size:clamp(70px,11vw,150px);}
   .display-wrap .timer-big .timer-lbl{font-size:16px;}
@@ -678,6 +680,9 @@ function defaultState(){
     roomCode: null,
     accessCode: 'JANMASHTAMI',
     joinRequests: [],       // {id, name, teamId, ts, status: pending|approved|denied|revoked}
+    maxTeams: MAX_TEAMS,    // host-configurable cap on number of contestant teams
+    winnersNeeded: 1,       // host-configurable: 1, 2, or 3 podium spots
+    winners: [],            // [teamId, ...] in finishing order — winners[0] is 1st place
     qIndex: -1,
     revealed: false,
     buzzQueue: [],           // [{teamId, ts}] — max 2 entries, in buzz order
@@ -690,6 +695,8 @@ function defaultState(){
     winner: null,
     locked: false,
     questionEndsAt: null,    // epoch ms
+    timerPaused: false,       // true while a buzzer's answer is being judged
+    timeRemainingMs: null,    // frozen remaining time while paused
     timeLimit: QUESTION_TIME_DEFAULT,
     room: defaultRoomState(),
     updatedAt: Date.now()
@@ -702,6 +709,9 @@ function normalizeState(s){
   if(s.roomCode === undefined) s.roomCode = null;
   if(!s.accessCode) s.accessCode = 'JANMASHTAMI';
   if(!s.joinRequests) s.joinRequests = [];
+  if(!s.maxTeams) s.maxTeams = MAX_TEAMS;
+  if(!s.winnersNeeded) s.winnersNeeded = 1;
+  if(!s.winners) s.winners = [];
   if(!s.wrongTeams) s.wrongTeams = [];
   if(!s.steps) s.steps = {};
   if(!s.buzzQueue) s.buzzQueue = [];
@@ -713,6 +723,8 @@ function normalizeState(s){
   if(s.qIndex === undefined) s.qIndex = -1;
   if(s.revealed === undefined) s.revealed = false;
   if(s.questionEndsAt === undefined) s.questionEndsAt = null;
+  if(s.timerPaused === undefined) s.timerPaused = false;
+  if(s.timeRemainingMs === undefined) s.timeRemainingMs = null;
   if(!s.timeLimit) s.timeLimit = QUESTION_TIME_DEFAULT;
   if(!s.totalSteps) s.totalSteps = TOTAL_STEPS;
   s.room = normalizeRoomState(s.room);
@@ -730,14 +742,15 @@ function currentAnswererId(state){
   return entry ? entry.teamId : null;
 }
 function isTimeExpired(state){
-  return state.qIndex>=0 && state.revealed && !state.locked && state.questionEndsAt && Date.now() >= state.questionEndsAt;
+  return state.qIndex>=0 && state.revealed && !state.locked && !state.timerPaused && state.questionEndsAt && Date.now() >= state.questionEndsAt;
 }
 function findOrCreateTeam(state, typedName){
   const clean = (typedName||'').trim().slice(0,24);
   if(!clean) return {error:'empty'};
   const existing = state.teams.find(t=>t.name.toLowerCase()===clean.toLowerCase());
   if(existing) return {team: existing};
-  if(state.teams.length >= MAX_TEAMS) return {error:'cap'};
+  const cap = state.maxTeams || MAX_TEAMS;
+  if(state.teams.length >= cap) return {error:'cap'};
   const team = {
     id: 't' + Date.now().toString(36) + Math.random().toString(36).slice(2,6),
     name: clean,
@@ -983,7 +996,14 @@ function updateTimerEl(el, state){
   if(!numEl) return;
   if(state.qIndex < 0 || !state.revealed || state.locked || !state.questionEndsAt){
     numEl.textContent = '--';
+    el.classList.remove('urgent','expired','paused');
+    return;
+  }
+  if(state.timerPaused){
+    const remainPaused = Math.max(0, (state.timeRemainingMs||0)/1000);
+    numEl.textContent = formatTimeVal(remainPaused);
     el.classList.remove('urgent','expired');
+    el.classList.add('paused');
     return;
   }
   const remain = (state.questionEndsAt - Date.now())/1000;
@@ -991,6 +1011,7 @@ function updateTimerEl(el, state){
   numEl.textContent = expired ? '0' : formatTimeVal(remain);
   el.classList.toggle('urgent', !expired && remain <= 10);
   el.classList.toggle('expired', expired);
+  el.classList.remove('paused');
 }
 setInterval(()=>{
   if(!liveStateCache) return;
@@ -1190,11 +1211,13 @@ function renderRaceBoard(state, containerId){
   el.style.gridTemplateColumns = `repeat(${teams.length}, 1fr)`;
   el.innerHTML = teams.map(t=>{
     const steps = state.steps[t.id]||0;
-    const isWinner = state.winner === t.id;
+    const rankIdx = (state.winners||[]).indexOf(t.id);
+    const isWinner = rankIdx !== -1;
+    const medal = isWinner ? rankMedal(rankIdx+1) : '';
     return `<div class="pole-col">
       ${poleSvg(t, steps, state.totalSteps, isWinner)}
       <div class="pole-name" style="color:${t.color}">${escapeHtml(t.name)}</div>
-      <div class="pole-steps">${steps} / ${state.totalSteps}${isWinner?' 🏆':''}</div>
+      <div class="pole-steps">${steps} / ${state.totalSteps}${isWinner?' '+medal:''}</div>
     </div>`;
   }).join('');
 }
@@ -1261,12 +1284,16 @@ function clearWinFx(){
 }
 
 /* ============================= WIN SEQUENCE ============================= */
-let lastWinnerShown = null;
-function triggerWinSequence(state, playSound){
+let lastWinnersShownCount = 0;
+function rankMedal(rank){ return rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':'🏅'; }
+function rankWord(rank){ return rank===1?'1st':rank===2?'2nd':rank===3?'3rd':(rank+'th'); }
+function triggerRankWinSequence(state, teamId, rank, playSound){
   clearWinFx();
-  const team = findTeamById(state, state.winner);
-  const name = team ? team.name : state.winner;
+  const team = findTeamById(state, teamId);
+  const name = team ? team.name : teamId;
   const color = team ? team.color : '#f0b429';
+  const medal = rankMedal(rank);
+  const headline = rank===1 ? `${name} wins!` : `${name} finishes ${rankWord(rank)}!`;
 
   if(playSound) playMatkaSmash();
 
@@ -1287,24 +1314,25 @@ function triggerWinSequence(state, playSound){
     reveal.className = 'winfx-el win-reveal';
     reveal.innerHTML = `
       ${winnerFigureSvg(color)}
-      <h2>${escapeHtml(name)} wins!</h2>
-      <p>The makhan-filled matka is broken — Jai Shri Krishna! 🧈🪈🦚</p>
+      <h2>${medal} ${escapeHtml(headline)}</h2>
+      <p>${rank===1 ? 'The makhan-filled matka is broken — Jai Shri Krishna! 🧈🪈🦚' : 'Podium spot secured — the race continues!'}</p>
       <button class="btn gold" id="winCloseBtn">Close</button>
     `;
     document.body.appendChild(reveal);
     document.getElementById('winCloseBtn').addEventListener('click', clearWinFx);
     confettiBurst();
-    setTimeout(confettiBurst, 900);
+    if(rank===1) setTimeout(confettiBurst, 900);
   }, 900);
 }
 
 function maybeShowWin(state, playSound){
-  if(state.winner && state.winner !== lastWinnerShown){
-    lastWinnerShown = state.winner;
-    triggerWinSequence(state, playSound);
+  const winners = state.winners || [];
+  while(lastWinnersShownCount < winners.length){
+    lastWinnersShownCount += 1;
+    triggerRankWinSequence(state, winners[lastWinnersShownCount-1], lastWinnersShownCount, playSound);
   }
-  if(!state.winner && lastWinnerShown){
-    lastWinnerShown = null;
+  if(winners.length === 0 && lastWinnersShownCount > 0){
+    lastWinnersShownCount = 0;
     clearWinFx();
   }
 }
@@ -1433,7 +1461,7 @@ function renderContestantJoinForm(state, errorMsg){
     if(!fresh.lobbyOpen){ renderContestantJoinForm(fresh, 'The lobby just closed. Ask your host to reopen it.'); return; }
     if(fresh.roomCode !== code){ renderContestantJoinForm(fresh, "That room code doesn't match — check with your host."); return; }
     const teamRes = findOrCreateTeam(fresh, teamNameVal);
-    if(teamRes.error === 'cap'){ renderContestantJoinForm(fresh, `Maximum of ${MAX_TEAMS} teams reached — ask your host to check existing team names.`); return; }
+    if(teamRes.error === 'cap'){ renderContestantJoinForm(fresh, `Maximum of ${fresh.maxTeams||MAX_TEAMS} teams reached — ask your host to check existing team names.`); return; }
     if(teamRes.error === 'empty'){ renderContestantJoinForm(fresh, 'Please enter a team name.'); return; }
     const id = 'r' + Date.now().toString(36) + Math.random().toString(36).slice(2,7);
     fresh.joinRequests.push({id, name, teamId: teamRes.team.id, ts: Date.now(), status:'pending'});
@@ -1538,10 +1566,23 @@ async function contestantGameTick(team, state, displayName){
   }
 
   if(state.locked){
-    const winTeam = findTeamById(state, state.winner);
     pill.textContent = '🏆 Game over';
     qBox.classList.add('waiting');
-    qtext.textContent = `${winTeam ? winTeam.name : state.winner} broke the matka!`;
+    const podiumText = (state.winners||[]).map((id,i)=>{
+      const t = findTeamById(state, id);
+      return `${rankMedal(i+1)} ${t?t.name:id}`;
+    }).join('   ·   ');
+    qtext.textContent = podiumText || 'The matka has been broken!';
+    btn.disabled = true; btn.textContent = 'FINISHED';
+    if(optionsWrap) optionsWrap.innerHTML = '';
+    return;
+  }
+
+  const myRank = (state.winners||[]).indexOf(team.id);
+  if(myRank !== -1){
+    pill.textContent = `${rankMedal(myRank+1)} You finished ${rankWord(myRank+1)}! Waiting for the race to conclude…`;
+    qBox.classList.add('waiting');
+    qtext.textContent = 'Sit back and watch the remaining podium spots get decided.';
     btn.disabled = true; btn.textContent = 'FINISHED';
     if(optionsWrap) optionsWrap.innerHTML = '';
     return;
@@ -1611,6 +1652,10 @@ async function doSelectAnswer(team, idx){
   const state = await loadState();
   if(state.locked || isTimeExpired(state) || currentAnswererId(state) !== team.id || state.selectedAnswer !== null) return;
   state.selectedAnswer = idx;
+  if(!state.timerPaused && state.questionEndsAt){
+    state.timerPaused = true;
+    state.timeRemainingMs = Math.max(0, state.questionEndsAt - Date.now());
+  }
   await saveState(state);
 }
 
@@ -1618,6 +1663,7 @@ async function doBuzz(team){
   playBuzzClick();
   const state = await loadState();
   if(state.locked || state.qIndex<0 || !state.revealed || isTimeExpired(state)) return;
+  if((state.winners||[]).includes(team.id)) return;
   if(state.buzzQueue.length >= 2) return;
   if(state.buzzQueue.some(b=>b.teamId===team.id)) return;
   if(state.wrongTeams.includes(team.id)) return;
@@ -1932,6 +1978,22 @@ function renderHostShell(state){
           style="font-family:'JetBrains Mono',monospace;background:rgba(255,255,255,0.08);color:var(--gold-soft);
           border:1px solid rgba(255,255,255,0.18);border-radius:9px;padding:9px 10px;font-size:14px;min-width:180px;">
       </div>
+      <div class="row" style="margin-top:16px;">
+        <label style="font-family:'JetBrains Mono',monospace;font-size:12.5px;opacity:.75;">MAX CONTESTANT TEAMS</label>
+        <input type="number" id="maxTeamsInput" value="${state.maxTeams||MAX_TEAMS}" min="1" max="12"
+          style="font-family:'JetBrains Mono',monospace;background:rgba(255,255,255,0.08);color:var(--gold-soft);
+          border:1px solid rgba(255,255,255,0.18);border-radius:9px;padding:9px 10px;font-size:14px;width:80px;">
+      </div>
+      <div class="row" style="margin-top:16px;">
+        <label style="font-family:'JetBrains Mono',monospace;font-size:12.5px;opacity:.75;">WINNERS (PODIUM SIZE)</label>
+        <select id="winnersNeededInput"
+          style="font-family:'JetBrains Mono',monospace;background:rgba(255,255,255,0.08);color:var(--gold-soft);
+          border:1px solid rgba(255,255,255,0.18);border-radius:9px;padding:9px 10px;font-size:14px;">
+          <option value="1" ${state.winnersNeeded===1?'selected':''}>1 — single winner</option>
+          <option value="2" ${state.winnersNeeded===2?'selected':''}>2 — 1st &amp; 2nd</option>
+          <option value="3" ${state.winnersNeeded===3?'selected':''}>3 — 1st, 2nd &amp; 3rd</option>
+        </select>
+      </div>
     </div>
 
     <div class="panel">
@@ -2059,6 +2121,8 @@ async function hostNextQuestion(){
   state.wrongTeams = [];
   state.timeLimit = QUESTION_TIME_DEFAULT;
   state.questionEndsAt = Date.now() + QUESTION_TIME_DEFAULT*1000;
+  state.timerPaused = false;
+  state.timeRemainingMs = null;
   hostCheckOn = false;
   await saveState(state);
   playReveal();
@@ -2066,7 +2130,11 @@ async function hostNextQuestion(){
 async function hostAddTime(){
   const state = await loadState();
   if(state.locked || state.qIndex<0 || !state.revealed) return;
-  state.questionEndsAt = (state.questionEndsAt || Date.now()) + TIME_INCREMENT*1000;
+  if(state.timerPaused){
+    state.timeRemainingMs = (state.timeRemainingMs||0) + TIME_INCREMENT*1000;
+  } else {
+    state.questionEndsAt = (state.questionEndsAt || Date.now()) + TIME_INCREMENT*1000;
+  }
   state.timeLimit += TIME_INCREMENT;
   await saveState(state);
 }
@@ -2085,11 +2153,15 @@ async function hostMarkCorrect(){
   const state = await loadState();
   const cur = currentAnswererId(state);
   if(!cur || state.locked) return;
+  if(state.winners.includes(cur)) return; // already finished, guard against re-award
   state.steps[cur] = Math.min((state.steps[cur]||0)+1, state.totalSteps);
-  const wonNow = state.steps[cur] >= state.totalSteps;
-  if(wonNow){
-    state.winner = cur;
-    state.locked = true;
+  const justFinished = state.steps[cur] >= state.totalSteps;
+  if(justFinished){
+    state.winners.push(cur);
+    if(state.winners.length >= (state.winnersNeeded||1)){
+      state.winner = state.winners[0];
+      state.locked = true;
+    }
   }
   state.revealed = false;
   state.buzzQueue = [];
@@ -2098,11 +2170,12 @@ async function hostMarkCorrect(){
   state.revealedAnswer = false;
   state.wrongTeams = [];
   state.questionEndsAt = null;
+  state.timerPaused = false;
+  state.timeRemainingMs = null;
   hostCheckOn = false;
   await saveState(state);
-  if(wonNow){
-    lastWinnerShown = cur;
-    triggerWinSequence(state, true);
+  if(justFinished){
+    maybeShowWin(state, true);
   } else {
     playBell();
   }
@@ -2116,6 +2189,11 @@ async function hostMarkWrong(){
   state.selectedAnswer = null;
   state.revealedAnswer = false;
   hostCheckOn = false;
+  if(state.timerPaused){
+    state.questionEndsAt = Date.now() + Math.max(0, state.timeRemainingMs||0);
+    state.timerPaused = false;
+    state.timeRemainingMs = null;
+  }
   await saveState(state);
 }
 async function hostResetBuzz(){
@@ -2125,6 +2203,11 @@ async function hostResetBuzz(){
   state.selectedAnswer = null;
   state.revealedAnswer = false;
   hostCheckOn = false;
+  if(state.timerPaused){
+    state.questionEndsAt = Date.now() + Math.max(0, state.timeRemainingMs||0);
+    state.timerPaused = false;
+    state.timeRemainingMs = null;
+  }
   await saveState(state);
 }
 async function hostSetAccessCode(code){
@@ -2132,8 +2215,20 @@ async function hostSetAccessCode(code){
   state.accessCode = code.trim() || 'JANMASHTAMI';
   await saveState(state);
 }
+async function hostSetMaxTeams(val){
+  const state = await loadState();
+  const n = Math.max(1, Math.min(12, parseInt(val,10) || MAX_TEAMS));
+  state.maxTeams = n;
+  await saveState(state);
+}
+async function hostSetWinnersNeeded(val){
+  const state = await loadState();
+  const n = Math.max(1, Math.min(3, parseInt(val,10) || 1));
+  state.winnersNeeded = n;
+  await saveState(state);
+}
 async function hostResetGame(){
-  if(!confirm('Reset round progress? Teams, the lobby, room code, access password, and join requests will be kept.')) return;
+  if(!confirm('Reset round progress? Teams, the lobby, room code, access password, contestant/winner settings, and join requests will be kept.')) return;
   const state = await loadState();
   const fresh = defaultState();
   fresh.teams = state.teams;
@@ -2141,11 +2236,13 @@ async function hostResetGame(){
   fresh.roomCode = state.roomCode;
   fresh.accessCode = state.accessCode;
   fresh.joinRequests = state.joinRequests;
+  fresh.maxTeams = state.maxTeams;
+  fresh.winnersNeeded = state.winnersNeeded;
   fresh.room = state.room;
   fresh.teams.forEach(t=>{ fresh.steps[t.id] = 0; });
   hostCheckOn = false;
   await saveState(fresh);
-  lastWinnerShown = null;
+  lastWinnersShownCount = 0;
   clearWinFx();
 }
 
@@ -2193,6 +2290,7 @@ async function hostRoomNextQuestion(){
 async function hostRoomMarkCorrect(){
   const state = await loadState();
   const r = state.room;
+  if(!r.questionOpen || r.answeredCorrect) return; // already judged — ignore repeat clicks
   const cur = roomCurrentAnswererId(state);
   if(!cur) return;
   r.scores[cur] = (r.scores[cur]||0) + r.currentPoints;
@@ -2205,6 +2303,7 @@ async function hostRoomMarkCorrect(){
 async function hostRoomMarkWrong(){
   const state = await loadState();
   const r = state.room;
+  if(!r.questionOpen || r.answeredCorrect) return; // already judged — ignore repeat clicks
   const cur = roomCurrentAnswererId(state);
   if(!cur) return;
   r.wrongTeams.push(cur);
@@ -2413,8 +2512,8 @@ function renderRoomDashboard(state){
   document.getElementById('roomNewPasskeyBtn').addEventListener('click', hostRoomNewPasskey);
   document.getElementById('roomNextBtn').addEventListener('click', hostRoomNextQuestion);
   document.getElementById('roomResetBuzzBtn').addEventListener('click', hostRoomResetBuzz);
-  document.getElementById('roomCorrectBtn').addEventListener('click', hostRoomMarkCorrect);
-  document.getElementById('roomWrongBtn').addEventListener('click', hostRoomMarkWrong);
+  document.getElementById('roomCorrectBtn').addEventListener('click', (e)=>{ e.currentTarget.disabled = true; document.getElementById('roomWrongBtn').disabled = true; hostRoomMarkCorrect(); });
+  document.getElementById('roomWrongBtn').addEventListener('click', (e)=>{ e.currentTarget.disabled = true; document.getElementById('roomCorrectBtn').disabled = true; hostRoomMarkWrong(); });
   document.getElementById('roomFinalizeBtn').addEventListener('click', hostRoomFinalize);
   document.getElementById('roomResetProgressBtn').addEventListener('click', async ()=>{
     await hostRoomResetProgress();
@@ -2495,8 +2594,9 @@ async function hostRoomTick(state){
   }
 
   const cur = roomCurrentAnswererId(state);
-  correctBtn.disabled = !cur;
-  wrongBtn.disabled = !cur;
+  const canJudge = !!cur && r.questionOpen && !r.answeredCorrect;
+  correctBtn.disabled = !canJudge;
+  wrongBtn.disabled = !canJudge;
 }
 
 async function hostTick(state){
@@ -2669,12 +2769,16 @@ function initHostPage(state0){
     document.getElementById('addTimeBtn').addEventListener('click', hostAddTime);
     document.getElementById('checkBtn').addEventListener('click', ()=>{ hostCheckOn = !hostCheckOn; });
     document.getElementById('revealBtn').addEventListener('click', hostRevealToAll);
-    document.getElementById('correctBtn').addEventListener('click', ()=>{ getCtx(); hostMarkCorrect(); });
-    document.getElementById('wrongBtn').addEventListener('click', hostMarkWrong);
+    document.getElementById('correctBtn').addEventListener('click', (e)=>{ e.currentTarget.disabled = true; document.getElementById('wrongBtn').disabled = true; getCtx(); hostMarkCorrect(); });
+    document.getElementById('wrongBtn').addEventListener('click', (e)=>{ e.currentTarget.disabled = true; document.getElementById('correctBtn').disabled = true; hostMarkWrong(); });
     document.getElementById('resetBuzzBtn').addEventListener('click', hostResetBuzz);
     document.getElementById('resetGameBtn').addEventListener('click', hostResetGame);
     const accessInput = document.getElementById('accessCodeInput');
     if(accessInput) accessInput.addEventListener('change', ()=> hostSetAccessCode(accessInput.value));
+    const maxTeamsInput = document.getElementById('maxTeamsInput');
+    if(maxTeamsInput) maxTeamsInput.addEventListener('change', ()=> hostSetMaxTeams(maxTeamsInput.value));
+    const winnersNeededInput = document.getElementById('winnersNeededInput');
+    if(winnersNeededInput) winnersNeededInput.addEventListener('change', ()=> hostSetWinnersNeeded(winnersNeededInput.value));
   }
 
   let namesInit = false;
@@ -2726,8 +2830,11 @@ async function displayTick(state){
   updateTimerEl(document.getElementById('timerDisplay'), state);
 
   if(state.locked){
-    const winTeam = findTeamById(state, state.winner);
-    title.textContent = `🏆 ${winTeam ? winTeam.name : state.winner} broke the matka!`;
+    const podiumText = (state.winners||[]).map((id,i)=>{
+      const t = findTeamById(state, id);
+      return `${rankMedal(i+1)} ${t?t.name:id}`;
+    }).join('   ·   ');
+    title.textContent = `🏆 ${podiumText || 'The matka has been broken!'}`;
     kbcWrap.innerHTML = '';
     displayLastQIndex = state.qIndex; displayLastRevealed = false;
     return;
